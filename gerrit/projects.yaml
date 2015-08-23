@@ -36,3 +36,8 @@
 - project: openswitch/ops-sysd
   description: OpenSwitch System Daemon
   upstream: https://git.openhalon.io/openhalon/sysd
+
+# OpenSwitch Utils
+- project: openswitch/ops-outils
+  description: OpenSwitch Utils
+  upstream: https://git.openhalon.io/openhalon/halonutils
