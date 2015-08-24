@@ -1,6 +1,6 @@
 - job-template:
-    name: 'lldpd-check-{platform}'
-    node: openhalon
+    name: 'ops-lldpd-check-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -11,11 +11,11 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'lldpd'
+            module: 'ops-lldpd'
             platform: '{platform}'
 
 - job-template:
-    name: 'lldpd-gate-{platform}'
+    name: 'ops-lldpd-gate-{platform}'
     node: openhalon
 
     wrappers:
@@ -27,11 +27,11 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'lldpd'
+            module: 'ops-lldpd'
             platform: '{platform}'
 
 - job-group:
-    name: 'lldpd-jobs'
+    name: 'ops-lldpd-jobs'
     jobs:
-      - 'lldpd-check-{platform}'
-      - 'lldpd-gate-{platform}'
+      - 'ops-lldpd-check-{platform}'
+      - 'ops-lldpd-gate-{platform}'

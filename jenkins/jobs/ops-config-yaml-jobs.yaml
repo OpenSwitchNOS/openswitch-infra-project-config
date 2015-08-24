@@ -1,6 +1,6 @@
 - job-template:
-    name: 'vsi-check-{platform}'
-    node: openhalon
+    name: 'ops-config-yaml-check-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -11,12 +11,12 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'halon-vsi'
+            module: 'config-yaml'
             platform: '{platform}'
 
 - job-template:
-    name: 'vsi-gate-{platform}'
-    node: openhalon
+    name: 'ops-config-yaml-gate-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -27,11 +27,11 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'halon-vsi'
+            module: 'config-yaml'
             platform: '{platform}'
 
 - job-group:
-    name: 'vsi-jobs'
+    name: 'ops-config-yaml-jobs'
     jobs:
-      - 'vsi-check-{platform}'
-      - 'vsi-gate-{platform}'
+      - 'ops-config-yaml-check-{platform}'
+      - 'ops-config-yaml-gate-{platform}'

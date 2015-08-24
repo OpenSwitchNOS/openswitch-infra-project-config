@@ -1,6 +1,6 @@
 - job-template:
-    name: 'restd-check-{platform}'
-    node: openhalon
+    name: 'ops-lacpd-check-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -11,12 +11,12 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'restd'
+            module: 'lacpd'
             platform: '{platform}'
 
 - job-template:
-    name: 'restd-gate-{platform}'
-    node: openhalon
+    name: 'ops-lacpd-gate-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -27,11 +27,11 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'restd'
+            module: 'lacpd'
             platform: '{platform}'
 
 - job-group:
-    name: 'restd-jobs'
+    name: 'ops-lacpd-jobs'
     jobs:
-      - 'restd-check-{platform}'
-      - 'restd-gate-{platform}'
+      - 'ops-lacpd-check-{platform}'
+      - 'ops-lacpd-gate-{platform}'

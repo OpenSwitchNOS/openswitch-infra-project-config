@@ -1,6 +1,6 @@
 - job-template:
-    name: 'aaa-utils-check-{platform}'
-    node: openhalon
+    name: 'ops-ledd-check-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -11,12 +11,12 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'aaa-utils'
+            module: 'ledd'
             platform: '{platform}'
 
 - job-template:
-    name: 'aaa-utils-gate-{platform}'
-    node: openhalon
+    name: 'ops-ledd-gate-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -27,11 +27,11 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'aaa-utils'
+            module: 'ops-ledd'
             platform: '{platform}'
 
 - job-group:
-    name: 'aaa-utils-jobs'
+    name: 'ops-ledd-jobs'
     jobs:
-      - 'aaa-utils-check-{platform}'
-      - 'aaa-utils-gate-{platform}'
+      - 'ops-ledd-check-{platform}'
+      - 'ops-ledd-gate-{platform}'

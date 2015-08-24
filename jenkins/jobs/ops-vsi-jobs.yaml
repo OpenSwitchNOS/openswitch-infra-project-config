@@ -1,6 +1,6 @@
 - job-template:
-    name: 'intfd-check-{platform}'
-    node: openhalon
+    name: 'ops-vsi-check-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -11,12 +11,12 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'intfd'
+            module: 'ops-vsi'
             platform: '{platform}'
 
 - job-template:
-    name: 'intfd-gate-{platform}'
-    node: openhalon
+    name: 'ops-vsi-gate-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -27,11 +27,11 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'intfd'
+            module: 'ops-vsi'
             platform: '{platform}'
 
 - job-group:
-    name: 'intfd-jobs'
+    name: 'ops-vsi-jobs'
     jobs:
-      - 'intfd-check-{platform}'
-      - 'intfd-gate-{platform}'
+      - 'ops-vsi-check-{platform}'
+      - 'ops-vsi-gate-{platform}'

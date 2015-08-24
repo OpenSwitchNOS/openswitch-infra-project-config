@@ -1,6 +1,6 @@
 - job-template:
-    name: 'fand-check-{platform}'
-    node: openhalon
+    name: 'ops-powerd-check-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -11,12 +11,12 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'fand'
+            module: 'ops-powerd'
             platform: '{platform}'
 
 - job-template:
-    name: 'fand-gate-{platform}'
-    node: openhalon
+    name: 'ops-powerd-gate-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -27,11 +27,11 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'fand'
+            module: 'ops-powerd'
             platform: '{platform}'
 
 - job-group:
-    name: 'fand-jobs'
+    name: 'ops-powerd-jobs'
     jobs:
-      - 'fand-check-{platform}'
-      - 'fand-gate-{platform}'
+      - 'ops-powerd-check-{platform}'
+      - 'ops-powerd-gate-{platform}'

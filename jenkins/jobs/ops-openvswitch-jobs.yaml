@@ -1,6 +1,6 @@
 - job-template:
-    name: 'openvswitch-check-{platform}'
-    node: openhalon
+    name: 'ops-openvswitch-check-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -11,12 +11,12 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'openvswitch-halon'
+            module: 'ops-openvswitch-halon'
             platform: '{platform}'
 
 - job-template:
-    name: 'openvswitch-gate-{platform}'
-    node: openhalon
+    name: 'ops-openvswitch-gate-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -27,23 +27,23 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'openvswitch-halon'
+            module: 'ops-openvswitch'
             platform: '{platform}'
         - build-openvswitch-docs:
-            module: 'openvswitch-halon'
+            module: 'ops-openvswitch'
         - shell: "make"
 
     publishers:
         - scp:
-            site: static.openhalon.io
+            site: static.openswitch.io
             files:
               - target: 'docs/openswitch/schema'
-                source: 'src/openvswitch-halon/build/dist-docs/ovs-vswitchd.conf.db.5*'
+                source: 'src/ops-openvswitch/build/dist-docs/ovs-vswitchd.conf.db.5*'
                 keep-hierarchy: false
                 copy-after-failure: false
 
 - job-group:
-    name: 'openvswitch-jobs'
+    name: 'ops-openvswitch-jobs'
     jobs:
-      - 'openvswitch-check-{platform}'
-      - 'openvswitch-gate-{platform}'
+      - 'ops-openvswitch-check-{platform}'
+      - 'ops-openvswitch-gate-{platform}'

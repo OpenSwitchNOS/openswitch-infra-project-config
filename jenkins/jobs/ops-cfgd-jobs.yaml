@@ -1,5 +1,5 @@
 - job-template:
-    name: 'quagga-check-{platform}'
+    name: 'ops-cfgd-check-{platform}'
     node: openhalon
 
     wrappers:
@@ -11,11 +11,11 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'quagga'
+            module: 'ops-cfgd'
             platform: '{platform}'
 
 - job-template:
-    name: 'quagga-gate-{platform}'
+    name: 'ops-cfgd-gate-{platform}'
     node: openhalon
 
     wrappers:
@@ -27,11 +27,11 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'quagga'
+            module: 'ops-cfgd'
             platform: '{platform}'
 
 - job-group:
-    name: 'quagga-jobs'
+    name: 'ops-cfgd-jobs'
     jobs:
-      - 'quagga-check-{platform}'
-      - 'quagga-gate-{platform}'
+      - 'ops-cfgd-check-{platform}'
+      - 'ops-cfgd-gate-{platform}'

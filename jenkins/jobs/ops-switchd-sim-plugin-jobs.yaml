@@ -1,6 +1,6 @@
 - job-template:
-    name: 'tempd-check-{platform}'
-    node: openhalon
+    name: 'ops-switchd-sim-plugin-check-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -11,12 +11,12 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'tempd'
+            module: 'ops-switchd-sim-plugin'
             platform: '{platform}'
 
 - job-template:
-    name: 'tempd-gate-{platform}'
-    node: openhalon
+    name: 'ops-switchd-sim-plugin-gate-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -27,11 +27,11 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'tempd'
+            module: 'ops-switchd-sim-pluginn'
             platform: '{platform}'
 
 - job-group:
-    name: 'tempd-jobs'
+    name: 'ops-switchd-sim-plugin-jobs'
     jobs:
-      - 'tempd-check-{platform}'
-      - 'tempd-gate-{platform}'
+      - 'ops-switchd-sim-plugin-check-{platform}'
+      - 'ops-switchd-sim-plugin-gate-{platform}'
