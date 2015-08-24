@@ -1,6 +1,6 @@
 - job-template:
-    name: 'ledd-check-{platform}'
-    node: openhalon
+    name: 'ops-restd-check-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -11,12 +11,12 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'ledd'
+            module: 'ops-restd'
             platform: '{platform}'
 
 - job-template:
-    name: 'ledd-gate-{platform}'
-    node: openhalon
+    name: 'ops-restd-gate-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -27,11 +27,11 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'ledd'
+            module: 'ops-restd'
             platform: '{platform}'
 
 - job-group:
-    name: 'ledd-jobs'
+    name: 'ops-restd-jobs'
     jobs:
-      - 'ledd-check-{platform}'
-      - 'ledd-gate-{platform}'
+      - 'ops-restd-check-{platform}'
+      - 'ops-restd-gate-{platform}'

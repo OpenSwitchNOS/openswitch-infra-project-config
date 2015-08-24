@@ -1,6 +1,6 @@
 - job-template:
-    name: 'ovs-sim-plugin-check-{platform}'
-    node: openhalon
+    name: 'ops-arpmgrd-check-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -11,12 +11,12 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'ovs-sim-plugin'
+            module: 'ops-arpmgrd'
             platform: '{platform}'
 
 - job-template:
-    name: 'ovs-sim-plugin-gate-{platform}'
-    node: openhalon
+    name: 'ops-arpmgrd-gate-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -27,11 +27,11 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'ovs-sim-plugin'
+            module: 'ops-arpmgrd'
             platform: '{platform}'
 
 - job-group:
-    name: 'ovs-sim-plugin-jobs'
+    name: 'ops-arpmgrd-jobs'
     jobs:
-      - 'ovs-sim-plugin-check-{platform}'
-      - 'ovs-sim-plugin-gate-{platform}'
+      - 'ops-arpmgrd-check-{platform}'
+      - 'ops-arpmgrd-gate-{platform}'
