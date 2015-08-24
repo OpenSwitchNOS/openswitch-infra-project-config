@@ -1,6 +1,6 @@
 - job-template:
-    name: 'as5712-config-check-{platform}'
-    node: openhalon
+    name: 'ops-intfd-check-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -11,12 +11,12 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'halon-config-as5712'
+            module: 'intfd'
             platform: '{platform}'
 
 - job-template:
-    name: 'as5712-config-gate-{platform}'
-    node: openhalon
+    name: 'ops-intfd-gate-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -27,11 +27,11 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'halon-config-as5712'
+            module: 'intfd'
             platform: '{platform}'
 
 - job-group:
-    name: 'as5712-config-jobs'
+    name: 'ops-intfd-jobs'
     jobs:
-      - 'as5712-config-check-{platform}'
-      - 'as5712-config-gate-{platform}'
+      - 'ops-intfd-check-{platform}'
+      - 'ops-intfd-gate-{platform}'

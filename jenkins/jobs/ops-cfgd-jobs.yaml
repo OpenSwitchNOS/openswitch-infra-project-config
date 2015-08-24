@@ -1,5 +1,5 @@
 - job-template:
-    name: 'arpmgrd-check-{platform}'
+    name: 'ops-cfgd-check-{platform}'
     node: openhalon
 
     wrappers:
@@ -11,11 +11,11 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'arpmgrd'
+            module: 'ops-cfgd'
             platform: '{platform}'
 
 - job-template:
-    name: 'arpmgrd-gate-{platform}'
+    name: 'ops-cfgd-gate-{platform}'
     node: openhalon
 
     wrappers:
@@ -27,11 +27,11 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'arpmgrd'
+            module: 'ops-cfgd'
             platform: '{platform}'
 
 - job-group:
-    name: 'arpmgrd-jobs'
+    name: 'ops-cfgd-jobs'
     jobs:
-      - 'arpmgrd-check-{platform}'
-      - 'arpmgrd-gate-{platform}'
+      - 'ops-cfgd-check-{platform}'
+      - 'ops-cfgd-gate-{platform}'

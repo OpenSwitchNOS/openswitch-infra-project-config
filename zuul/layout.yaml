@@ -256,14 +256,130 @@ projects:
       - name: module-build
         module: ops-utils
         platform: as5712
-#
-#  - name: openhalon/config-yaml
-#    template:
-#      - name: merge-check
-#      - name: module-build
-#        platform: genericx86-64
-#        module: config-yaml
-#
+
+  - name: openswitch/ops-aaa-utils
+    template:
+      - name: merge-check
+      - name: module-build
+        module: ops-aaa-utils
+        platform: genericx86-64
+
+
+  - name: openswitch/ops-arpmgrd
+    template:
+      - name: merge-check
+      - name: module-build
+        module: ops-arpmgrd
+        platform: genericx86-64
+      - name: module-build
+        module: ops-arpmgrd
+        platform: as5712
+
+  - name: openswitch/ops-config-as571
+    template:
+      - name: merge-check
+      - name: module-build
+        module: ops-config-as571
+        platform: as5712
+
+  - name: openswitch/ops-bufmond
+    template:
+      - name: merge-check
+      - name: module-build
+        module: ops-bufmond
+        platform: genericx86-64
+      - name: module-build
+        module: ops-bufmond
+        platform: as5712
+
+  - name: openswitch/ops-cfgd
+    template:
+      - name: merge-check
+      - name: module-build
+        module: ops-cfgd
+         platform: genericx86-64
+
+  - name: openswitch/ops-cli
+    template:
+      - name: merge-check
+      - name: module-build
+        module: ops-cli
+        platform: genericx86-64
+      - name: module-build
+        module: ops-cli
+        platform: as5712
+
+  - name: openswitch/ops-config-yaml
+    template:
+      - name: merge-check
+      - name: module-build
+        platform: genericx86-64
+        module: ops-config-yaml
+
+  - name: openswitch/ops-fand
+    template:
+      - name: merge-check
+      - name: module-build
+        module: ops-fand
+        platform: genericx86-64
+      - name: module-build
+        module: ops-fand
+        platform: as5712
+
+  - name: openswitch/ops-ft-framework
+    template:
+      - name: merge-check
+      - name: module-build
+        module: ops-ft-framework
+        platform: genericx86-64
+      - name: module-build
+        module: ops-ft-framework
+        platform: as5712
+
+  - name: openswitch/ops-portd
+    template:
+      - name: merge-check
+      - name: module-build
+        module: ops-portd
+        platform: genericx86-64
+      - name: module-build
+        module: ops-portd
+        platform: as5712
+
+  - name: openswitch/ops-intfd
+    template:
+      - name: merge-check
+      - name: module-build
+        module: ops-intfd
+        platform: genericx86-64
+
+  - name: openswitch/ops-lacpd
+    template:
+      - name: merge-check
+      - name: module-build
+        module: ops-lacpd
+        platform: genericx86-64
+      - name: module-build
+        module: ops-lacpd
+        platform: as5712
+
+  - name: openswitch/ops-ledd
+    template:
+      - name: merge-check
+      - name: module-build
+        module: ops-ledd
+        platform: genericx86-64
+      - name: module-build
+        module: ops-ledd
+        platform: as5712
+
+  - name: openswitch/ops-lldpd
+    template:
+      - name: merge-check
+      - name: module-build
+        module: ops-lldpd
+        platform: genericx86-64
+
 #  - name: openhalon/openvswitch
 #    template:
 #      - name: merge-check

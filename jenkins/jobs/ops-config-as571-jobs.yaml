@@ -1,6 +1,6 @@
 - job-template:
-    name: 'lacpd-check-{platform}'
-    node: openhalon
+    name: 'ops-config-as571-check-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -11,12 +11,12 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'lacpd'
+            module: 'ops-config-as571'
             platform: '{platform}'
 
 - job-template:
-    name: 'lacpd-gate-{platform}'
-    node: openhalon
+    name: 'ops-config-as571-gate-{platform}'
+    node: openswitch
 
     wrappers:
         - build-timeout:
@@ -27,11 +27,11 @@
     builders:
         - revoke-sudo
         - module-build:
-            module: 'lacpd'
+            module: 'ops-config-as571'
             platform: '{platform}'
 
 - job-group:
-    name: 'lacpd-jobs'
+    name: 'ops-config-as571-jobs'
     jobs:
-      - 'lacpd-check-{platform}'
-      - 'lacpd-gate-{platform}'
+      - 'ops-config-as571-check-{platform}'
+      - 'ops-config-as571-gate-{platform}'

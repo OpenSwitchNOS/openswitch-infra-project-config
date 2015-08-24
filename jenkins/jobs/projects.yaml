@@ -28,14 +28,129 @@
       jobs:
         - 'ops-utils-jobs'
 
-#  - project:
-#      name: openhalon/config-yaml
-#      node: 'openhalon'
-#      platform:
-#        - genericx86-64
-#      jobs:
-#        - 'config-yaml-jobs'
-#
+  - project:
+      name: openswitcj/ops-aaa-utils
+      node: 'openswitch'
+      platform:
+        - genericx86-64
+      jobs:
+        - 'ops-aaa-utils-jobs'
+
+  - project:
+      name: openswitcj/ops-arpmgrd
+      node: 'openswitch'
+      platform:
+        - genericx86-64
+        - as5712
+      jobs:
+        - 'ops-arpmgrd-jobs'
+
+  - project:
+      name: openswitch/ops-config-as571
+      node: 'openswitch'
+      platform:
+        - as5712
+      jobs:
+       - 'ops-config-as571'
+
+  - project:
+      name: openswitch/ops-bufmond
+      node: 'openswitch'
+      platform:
+        - as5712
+        - genericx86-64
+      jobs:
+        - 'ops-bufmond-jobs'
+
+  - project:
+      name: openswitch/ops-cfgd
+      node: 'openswitch'
+      platform:
+        - genericx86-64
+        - as5712
+      jobs:
+        - 'ops-cfgd-jobs'
+
+  - project:
+      name: openswitch/ops-cli
+      node: 'openswitch'
+      platform:
+        - genericx86-64
+        - as5712
+      jobs:
+        - 'ops-cli-jobs'
+
+  - project:
+      name: openswitch/ops-config-yaml
+      node: 'openswitch'
+      platform:
+        - genericx86-64
+      jobs:
+        - 'ops-config-yaml-jobs'
+
+  - project:
+      name: openswitch/ops-fand
+      node: 'openswitch'
+      platform:
+        - genericx86-64
+        - as5712
+      jobs:
+        - 'ops-fand-jobs'
+
+  - project:
+      name: openswitch/ops-ft-framework
+      node: 'openswitch'
+      platform:
+        - as5712
+        - genericx86-64
+      jobs:
+        - 'ops-ft-framework-jobs'
+
+  - project:
+      name: openswitch/ops-portd
+      node: 'openswitch'
+      platform:
+        - as5712
+        - genericx86-64
+      jobs:
+        - 'ops-portd-jobs'
+
+  - project:
+      name: openswitch/ops-intfd
+      node: 'openswitch'
+      platform:
+        - genericx86-64
+        - as5712
+      jobs:
+        - 'ops-intfd-jobs'
+
+  - project:
+      name: openswitch/ops-lacpd
+      node: 'openswitch'
+      platform:
+        - genericx86-64
+        - as5712
+      jobs:
+        - 'ops-lacpd-jobs'
+
+  - project:
+      name: openswitch/ops-ledd
+      node: 'openswitch'
+      platform:
+        - genericx86-64
+        - as5712
+      jobs:
+        - 'ops-ledd-jobs'
+
+  - project:
+      name: openswitch/ops-lldpd
+      node: 'openswitch'
+      platform:
+        - genericx86-64
+        - as5712
+      jobs:
+        - 'ops-lldpd-jobs'
+
 #  - project:
 #      name: governance
 #      node: 'bare-precise || bare-trusty'
