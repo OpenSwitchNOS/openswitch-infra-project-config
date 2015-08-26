@@ -7,6 +7,10 @@
       platform:
         - genericx86-64
         - as5712
+      emails-by-comma-when-success:
+        - halondev@hp.com
+      emails-by-comma-when-fail:
+        - openswitch-infra@groups.int.hpe.com
       jobs:
         - 'ops-default-builds'
 

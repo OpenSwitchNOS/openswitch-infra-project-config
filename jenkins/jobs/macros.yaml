@@ -956,3 +956,31 @@
     publishers:
       - zuul-swift-upload-logs-with-console:
           upload_source: '"**/*nose_results.html" "**/*testr_results.html.gz" ".testrepository/tmp*" "**/*subunit_log.txt.gz" ".tox/*/log/*"'
+
+
+# to define emails on project.yaml, use "a@hpe.com, b@hpe.com"
+- publisher:
+    name: mail-on-success
+    publishers:
+        - email-ext:
+	    recipients: '{emails-by-comma-when-success}'
+	    content-type: html
+	    subject: "$PROJECT_DEFAULT_SUBJECT"
+	    body: "$PROJECT_DEFAULT_CONTENT"
+	    success: true
+
+
+# to define emails on project.yaml, use "a@hpe.com, b@hpe.com"
+- publisher:
+    name: mail-on-fail
+    publishers:
+        - email-ext:
+	    recipients: '{emails-by-comma-when-fail}'
+	    content-type: html
+	    subject: "$PROJECT_DEFAULT_SUBJECT"
+	    body: "$PROJECT_DEFAULT_CONTENT"
+	    failure: true
+	    send-to:
+	        - developers
+		- recipients
+

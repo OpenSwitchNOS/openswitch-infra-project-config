@@ -30,7 +30,7 @@
                   - '0f99f00f-a5c0-460d-97b5-9b3dbdfd0773'
                   - 'ffc18805-a3da-4771-918a-eaaa6a1a0c70'
 
-    builders:
+	builders:
         - revoke-sudo
         - ops-distclean
         - gerrit-git-prep
@@ -39,6 +39,10 @@
         - ops-meta-ide
         - shared-states
         - download-caches
+
+    publisher:
+        - mail-on-fail
+            emails-by-comma-when-fail: '{emails-by-comma-when-fail}'
 
 - job-template:
     name: 'ops-periodic-{platform}'
@@ -65,6 +69,11 @@
         - ops-meta-ide
         - shared-states
         - download-caches
+		
+    publisher:
+        - mail-on-success
+            emails-by-comma-when-success: '{emails-by-comma-when-success}'
+
 
 - job-group:
     name: 'ops-default-builds'
