@@ -498,3 +498,12 @@ projects:
         module: ops-mgmt-intf
         platform: as5712
 
+  - name: openswitch/ops-docs
+    template:
+      - name: merge-check
+      - name: module-build
+        module: ops-docs
+        platform: genericx86-64
+      - name: module-build
+        module: ops-docs
+        platform: as5712

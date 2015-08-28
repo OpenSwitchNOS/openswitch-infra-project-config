@@ -265,6 +265,14 @@
       jobs:
         - 'ops-mgmt-intf-jobs'
 
+   - project:
+       name: openswitch/ops-docs
+       node: 'openswitch'
+       platform:
+         - as5712
+         - genericx86-64
+       jobs:
+         - 'ops-docs-jobs'
 ########################################################################
 # Section: OpenStack server projects
 ########################################################################
