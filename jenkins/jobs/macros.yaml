@@ -726,6 +726,12 @@
           cd src/{module}/build/
           make dist-docs
 
+ - builder:
+     name: dummy
+     builders:
+       - shell: |
+           #!/bin/sh
+           echo "This is a dummy process."
 # ======================================================================
 
 - wrapper:
