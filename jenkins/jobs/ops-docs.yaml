@@ -1,0 +1,17 @@
+- job-template:
+    name: 'ops-docs-check-{platform}'
+    node: openswitch
+
+    wrappers:
+        - build-timeout:
+            timeout: 120
+        - timestamps
+        - ansicolor
+
+    builders:
+        - dummy
+
+- job-group:
+    name: 'ops-docs-jobs'
+    jobs:
+      - 'ops-docs-check-{platform}'
