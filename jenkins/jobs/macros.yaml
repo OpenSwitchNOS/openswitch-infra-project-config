@@ -105,6 +105,38 @@
            make bake {module}
 
 - builder:
+    name: module-build-new
+
+    builders:
+      - shell: |
+           #!/bin/bash -x
+           set -e
+
+           # First remove any previous module. If the recipe changed version this will fail if we update first
+           if grep -q {module} .devenv ; then
+             make devenv_rm {module}
+           fi
+
+           # Now clone the build system
+           ZUUL_REF="" BRANCH=$ZUUL_BRANCH ZUUL_PROJECT=openswitch/ops-build \
+             /usr/local/jenkins/slave_scripts/gerrit-git-prep.sh https://review.openswitch.net git://git.openswitch.net
+
+           # Configure the platform if not already configured
+           mkdir -p /mnt/jenkins/workspace/sstate-cache
+           export SSTATE_DIR=/mnt/jenkins/workspace/sstate-cache
+           if [ ! -f .platform ] ; then
+             make configure {platform}
+           fi
+           mkdir -p src/{module}
+           cd src/{module}
+           /usr/local/jenkins/slave_scripts/gerrit-git-prep.sh https://review.openswitch.net git://git.openswitch.net
+           cd ../..
+           # Trigger building of some basic recipe to get the recipe environment working, since devtool is not that good yet...
+           make bake cmake-native
+           make devenv_import {module} $PWD/src/{module}
+           make bake {module}
+
+- builder:
     name: module-cttest
     builders:
       - shell: |
