@@ -114,9 +114,9 @@
            BRANCH=$ZUUL_BRANCH
            rm -fr .[^.]* *
            if git ls-remote https://git.openswitch.net/openswitch/ops-build | grep -sw "feature/ospf" 2>&1>/dev/null ; then
-             echo "===================  Building ops-build on $BRANCH =================== " 
+             echo "===================  Building ops-build on $BRANCH =================== "
              git clone -b $BRANCH https://git.openswitch.net/openswitch/ops-build .
-           else 
+           else
              echo "===================  Building ops-build on master =================== "
              git clone https://git.openswitch.net/openswitch/ops-build .
            fi
