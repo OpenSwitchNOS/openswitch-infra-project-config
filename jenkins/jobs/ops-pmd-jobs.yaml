@@ -1,5 +1,5 @@
-- job-template:
-    name: 'ops-pmd-check-{platform}'
+- job:
+    name: 'ops-pmd-check-as5712'
     node: openswitch
 
     wrappers:
@@ -10,12 +10,12 @@
 
     builders:
         - revoke-sudo
-        - module-build:
+        - module-build-branch:
             module: 'ops-pmd'
-            platform: '{platform}'
+            platform: 'as5712'
 
-- job-template:
-    name: 'ops-pmd-gate-{platform}'
+- job:
+    name: 'ops-pmd-check-genericx86-64'
     node: openswitch
 
     wrappers:
@@ -26,12 +26,43 @@
 
     builders:
         - revoke-sudo
+        - module-build-branch:
+            module: 'ops-pmd'
+            platform: 'genericx86-64'
+
+- job:
+    name: 'ops-pmd-gate-as5712'
+    node: openswitch
+
+    wrappers:
+        - build-timeout:
+            timeout: 120
+        - timestamps
+        - ansicolor
+
+    builders:
         - module-build:
             module: 'ops-pmd'
-            platform: '{platform}'
+            platform: 'as5712'
 
-- job-group:
-    name: 'ops-pmd-jobs'
-    jobs:
-      - 'ops-pmd-check-{platform}'
-      - 'ops-pmd-gate-{platform}'
+- job:
+    name: 'ops-pmd-gate-genericx86-64'
+    node: vsi
+
+    wrappers:
+        - build-timeout:
+            timeout: 120
+        - timestamps
+        - ansicolor
+
+    builders:
+        - module-build:
+            module: 'ops-pmd'
+            platform: 'genericx86-64'
+        - module-cttest:
+            module: 'ops-pmd'
+            platform: 'genericx86-64'
+
+    publishers:
+        - junit:
+            results: 'build/*test*.xml'

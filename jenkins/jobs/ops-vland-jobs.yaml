@@ -1,5 +1,5 @@
-- job-template:
-    name: 'ops-vland-check-{platform}'
+- job:
+    name: 'ops-vland-check-as5712'
     node: openswitch
 
     wrappers:
@@ -10,12 +10,12 @@
 
     builders:
         - revoke-sudo
-        - module-build:
+        - module-build-branch:
             module: 'ops-vland'
-            platform: '{platform}'
+            platform: 'as5712'
 
-- job-template:
-    name: 'ops-vland-gate-{platform}'
+- job:
+    name: 'ops-vland-check-genericx86-64'
     node: openswitch
 
     wrappers:
@@ -26,12 +26,43 @@
 
     builders:
         - revoke-sudo
+        - module-build-branch:
+            module: 'ops-vland'
+            platform: 'genericx86-64'
+
+- job:
+    name: 'ops-vland-gate-as5712'
+    node: openswitch
+
+    wrappers:
+        - build-timeout:
+            timeout: 120
+        - timestamps
+        - ansicolor
+
+    builders:
         - module-build:
             module: 'ops-vland'
-            platform: '{platform}'
+            platform: 'as5712'
 
-- job-group:
-    name: 'ops-vland-jobs'
-    jobs:
-      - 'ops-vland-check-{platform}'
-      - 'ops-vland-gate-{platform}'
+- job:
+    name: 'ops-vland-gate-genericx86-64'
+    node: vsi
+
+    wrappers:
+        - build-timeout:
+            timeout: 120
+        - timestamps
+        - ansicolor
+
+    builders:
+        - module-build:
+            module: 'ops-vland'
+            platform: 'genericx86-64'
+        - module-cttest:
+            module: 'ops-vland'
+            platform: 'genericx86-64'
+
+    publishers:
+        - junit:
+            results: 'build/*test*.xml'

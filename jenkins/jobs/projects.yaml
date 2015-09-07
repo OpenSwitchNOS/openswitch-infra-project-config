@@ -19,14 +19,14 @@
       jobs:
         - 'ops-default-builds'
 
-  - project:
-      name: openswitch/ops-sysd
-      node: 'openswitch'
-      platform:
-        - genericx86-64
-        - as5712
-      jobs:
-        - 'ops-sysd-jobs'
+#  - project:
+#      name: openswitch/ops-sysd
+#      node: 'openswitch'
+#      platform:
+#        - genericx86-64
+#        - as5712
+#      jobs:
+#        - 'ops-sysd-jobs'
 
   - project:
       name: openswitch/ops-utils
@@ -89,13 +89,13 @@
       jobs:
         - 'ops-cli-jobs'
 
-  - project:
-      name: openswitch/ops-config-yaml
-      node: 'openswitch'
-      platform:
-        - genericx86-64
-      jobs:
-        - 'ops-config-yaml-jobs'
+#  - project:
+#      name: openswitch/ops-config-yaml
+#      node: 'openswitch'
+#      platform:
+#        - genericx86-64
+#      jobs:
+#        - 'ops-config-yaml-jobs'
 
   - project:
       name: openswitch/ops-fand
@@ -124,23 +124,23 @@
 #      jobs:
 #        - 'ops-portd-jobs'
 
-  - project:
-      name: openswitch/ops-intfd
-      node: 'openswitch'
-      platform:
-        - genericx86-64
-        - as5712
-      jobs:
-        - 'ops-intfd-jobs'
+#  - project:
+#      name: openswitch/ops-intfd
+#      node: 'openswitch'
+#      platform:
+#        - genericx86-64
+#        - as5712
+#      jobs:
+#        - 'ops-intfd-jobs'
 
-  - project:
-      name: openswitch/ops-lacpd
-      node: 'openswitch'
-      platform:
-        - genericx86-64
-        - as5712
-      jobs:
-        - 'ops-lacpd-jobs'
+#  - project:
+#      name: openswitch/ops-lacpd
+#      node: 'openswitch'
+#      platform:
+#        - genericx86-64
+#        - as5712
+#      jobs:
+#        - 'ops-lacpd-jobs'
 
   - project:
       name: openswitch/ops-ledd
@@ -185,14 +185,14 @@
       jobs:
         - 'ops-switchd-bcm-plugin-jobs'
 
-  - project:
-      name: openswitch/ops-pmd
-      node: 'openswitch'
-      platform:
-        - genericx86-64
-        - as5712
-      jobs:
-        - 'ops-pmd-jobs'
+#  - project:
+#      name: openswitch/ops-pmd
+#      node: 'openswitch'
+#      platform:
+#        - genericx86-64
+#        - as5712
+#      jobs:
+#        - 'ops-pmd-jobs'
 
   - project:
       name: openswitch/ops-powerd
@@ -238,14 +238,14 @@
       jobs:
         - 'ops-tempd-jobs'
 
-  - project:
-      name: openswitch/ops-vland
-      node: 'openswitch'
-      platform:
-        - genericx86-64
-        - as5712
-      jobs:
-        - 'ops-vland-jobs'
+#  - project:
+#      name: openswitch/ops-vland
+#      node: 'openswitch'
+#      platform:
+#        - genericx86-64
+#        - as5712
+#      jobs:
+#        - 'ops-vland-jobs'
 
   - project:
       name: openswitch/ops-vsi
