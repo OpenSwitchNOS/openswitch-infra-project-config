@@ -80,14 +80,14 @@
       jobs:
         - 'ops-cfgd-jobs'
 
-  - project:
-      name: openswitch/ops-cli
-      node: 'openswitch'
-      platform:
-        - genericx86-64
-        - as5712
-      jobs:
-        - 'ops-cli-jobs'
+#  - project:
+#      name: openswitch/ops-cli
+#      node: 'openswitch'
+#      platform:
+#        - genericx86-64
+#        - as5712
+#      jobs:
+#        - 'ops-cli-jobs'
 
   - project:
       name: openswitch/ops-config-yaml
