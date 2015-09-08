@@ -1,37 +1,56 @@
-- job-template:
-    name: 'ops-aaa-utils-check-{platform}'
+- job:
+    name: 'ops-aaa-utils-check-as5712'
     node: openswitch
-
     wrappers:
         - build-timeout:
             timeout: 120
         - timestamps
         - ansicolor
-
     builders:
         - revoke-sudo
-        - module-build:
+        - module-build-branch:
             module: 'ops-aaa-utils'
-            platform: '{platform}'
-
-- job-template:
-    name: 'ops-aaa-utils-gate-{platform}'
+            platform: 'as5712'
+- job:
+    name: 'ops-aaa-utils-check-genericx86-64'
     node: openswitch
-
     wrappers:
         - build-timeout:
             timeout: 120
         - timestamps
         - ansicolor
-
     builders:
         - revoke-sudo
+        - module-build-branch:
+            module: 'ops-aaa-utils'
+            platform: 'genericx86-64'
+- job:
+    name: 'ops-aaa-utils-gate-as5712'
+    node: openswitch
+    wrappers:
+        - build-timeout:
+            timeout: 120
+        - timestamps
+        - ansicolor
+    builders:
         - module-build:
             module: 'ops-aaa-utils'
-            platform: '{platform}'
-
-- job-group:
-    name: 'ops-aaa-utils-jobs'
-    jobs:
-      - 'ops-aaa-utils-check-{platform}'
-      - 'ops-aaa-utils-gate-{platform}'
+            platform: 'as5712'
+- job:
+    name: 'ops-aaa-utils-gate-genericx86-64'
+    node: vsi
+    wrappers:
+        - build-timeout:
+            timeout: 120
+	- timestamps
+        - ansicolor
+    builders:
+        - module-build:
+            module: 'ops-aaa-utils'
+            platform: 'genericx86-64'
+        - module-cttest:
+            module: 'ops-aaa-utils'
+            platform: 'genericx86-64'
+    publishers:
+        - junit:
+            results: 'build/*test*.xml'
