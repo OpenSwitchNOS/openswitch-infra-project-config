@@ -10,8 +10,10 @@
 
     builders:
         - revoke-sudo
-        - gulp-dist:
+        - gulp-prepare:
             platform: genericx86-64
+        - gulp-get-documents-website
+        - gulp-dist
 
 - job:
     name: 'website-gate'
@@ -25,8 +27,10 @@
 
     builders:
         - revoke-sudo
-        - gulp-dist:
+        - gulp-prepare:
             platform: genericx86-64
+        - gulp-get-documents-website
+        - gulp-dist    
 
     publishers:
         - scp:
