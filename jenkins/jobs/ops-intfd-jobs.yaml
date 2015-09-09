@@ -8,9 +8,9 @@
         - timestamps
         - ansicolor
 
-    builders:
+    buildersa
         - revoke-sudo
-        - module-build:
+        - module-build-branch:
             module: 'ops-intfd'
             platform: '{platform}'
 
@@ -26,7 +26,7 @@
 
     builders:
         - revoke-sudo
-        - module-build:
+        - module-build-branch:
             module: 'ops-intfd'
             platform: '{platform}'
 
