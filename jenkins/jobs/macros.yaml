@@ -428,6 +428,9 @@
           #!/bin/bash -x
           VERSION_STRING=$(cat .version_string)
           echo "BUILD_ID=\"$VERSION_STRING\"" > build/build_info.conf
+          echo "Creating log file"
+          cd tools/bin/
+          ./changelog_projects.py
           make
 
 - builder:
@@ -444,7 +447,9 @@
           find images -name "*.ova" -exec bash -c "cp \"\$0\" artifacts/$VERSION_STRING/$PLATFORM/\$(basename -s .ova \"\$0\")-$VERSION_STRING.ova" {} \;
           find images -name "*.tar.gz" -exec bash -c "cp \"\$0\" artifacts/$VERSION_STRING/$PLATFORM/\$(basename -s .tar.gz \"\$0\")-$VERSION_STRING.tar.gz" {} \;
           find images -name "*.manifest" -exec bash -c "cp \"\$0\" artifacts/$VERSION_STRING/$PLATFORM/\$(basename -s .manifest \"\$0\")-$VERSION_STRING.manifest" {} \;
-          cd artifacts/$VERSION_STRING/$PLATFORM 
+          cd artifacts/$VERSION_STRING/$PLATFORM
+          cp tools/bin/changelog.manifest .DAjrp31011982
+
           for file in $(ls) ; do sha256sum $file > $file.sha256sum ; done
 
 - builder:
