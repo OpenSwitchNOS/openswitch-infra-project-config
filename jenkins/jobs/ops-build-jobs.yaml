@@ -42,7 +42,7 @@
 
 - job-template:
     name: 'ops-periodic-{platform}'
-    node: openswitch
+    node: vsi
 
     wrappers:
         - build-timeout:
@@ -66,6 +66,8 @@
         - ops-build:
             platform: '{platform}'
         - ops-meta-ide
+        - fttest-for-image:
+            platform: '{platform}'
         - shared-states
         - download-caches
         - create-periodic-build-image
