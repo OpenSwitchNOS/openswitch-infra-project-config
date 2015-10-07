@@ -74,7 +74,7 @@
   description: OpenvSwitch Buffer Monitor Daemon
 
 - project: openswitch/ops-broadview
-  description: OpenvSwitch BroadView Buffer Monitor Agent
+  description: OpenSwitch BroadView Buffer Monitor Agent
 
 - project: openswitch/ops-openvswitch
   description: OpenSwitch OpenVswitch
