@@ -82,7 +82,6 @@
                 copy-after-failure: false
                 keep-hierarchy: true
         - conditional-junit
-        - post-docker-clean
         - publish-opsTest-results
 
 - job-group:
