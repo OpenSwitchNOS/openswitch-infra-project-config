@@ -111,6 +111,10 @@
 - project: openswitch/ops-p4factory
   description: OpenSwitch port of P4 behavioral model daemon
 
+- project: openswitch/ops-snmp
+  description: OpenSwitch Simple Network Management Protocol
+
+
 # L2 Daemons
 - project: openswitch/ops-vland
   description: OpenSwitch VLAN Daemon
