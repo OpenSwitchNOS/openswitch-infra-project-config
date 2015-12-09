@@ -1,4 +1,3 @@
-
 #!/bin/bash
    
 IMAGE_NAME=$1
