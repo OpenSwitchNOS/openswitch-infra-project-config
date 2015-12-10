@@ -1,4 +1,5 @@
 #!/bin/bash
+
    
 IMAGE_NAME=$1
 [ $# -eq 0 ] && { echo "Usage: $0 IMAGE_TO_CLEAN"; exit 1; }
