@@ -353,6 +353,16 @@ projects:
         module: ops-bufmond
         platform: as5712
 
+  - name: openswitch/ops-switchd
+    template:
+      - name: merge-check
+      - name: module-build
+        module: ops-switchd
+        platform: genericx86-64
+      - name: module-build
+        module: ops-switchd
+        platform: as5712
+
   - name: openswitch/ops-cfgd
     template:
       - name: merge-check
@@ -458,14 +468,6 @@ projects:
       - ops-ovs-check
     gate:
       - ops-ovs-gate
-
-  - name: openswitch/ops-switchd
-    template:
-      - name: merge-check
-    check:
-      - ops-switchd-check
-    gate:
-      - ops-switchd-gate
 
   - name: openswitch/ops-switchd-container-plugin
     template:
