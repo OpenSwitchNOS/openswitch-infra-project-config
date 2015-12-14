@@ -10,13 +10,13 @@
 
     builders:
         - revoke-sudo
-        - module-build-branch:
-            module: 'ops-vsi'
-            platform: '{platform}'
+#        - module-build-branch:
+#            module: 'ops-vsi'
+#            platform: '{platform}'
 
 - job-template:
     name: 'ops-vsi-gate-{platform}'
-    node: openswitch
+    node: vsi
 
     wrappers:
         - build-timeout:
@@ -24,11 +24,22 @@
         - timestamps
         - ansicolor
 
+    logrotate:
+        daysToKeep: 14
+        numToKeep: 20
+
     builders:
         - revoke-sudo
         - module-build-branch:
-            module: 'ops-vsi'
+            module: 'ops'
             platform: '{platform}'
+        - feature-cttest:
+            module: 'ops'
+            platform: '{platform}'
+
+    publishers:
+        - conditional-junit
+        - post-docker-clean
 
 - job-group:
     name: 'ops-vsi-jobs'
