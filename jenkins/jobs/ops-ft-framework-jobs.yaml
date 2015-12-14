@@ -10,13 +10,10 @@
 
     builders:
         - revoke-sudo
-#        - module-build-branch:
-#            module: 'ft-framework'
-#            platform: '{platform}'
 
 - job-template:
     name: 'ops-ft-framework-gate-{platform}'
-    node: openswitch
+    node: vsi
 
     wrappers:
         - build-timeout:
@@ -24,11 +21,22 @@
         - timestamps
         - ansicolor
 
+    logrotate:
+        daysToKeep: 14
+        numToKeep: 20
+
     builders:
         - revoke-sudo
-#        - module-build-branch:
-#            module: 'ft-framework'
-#            platform: '{platform}'
+        - module-build-branch:
+            module: 'ops'
+            platform: 'genericx86-64'
+        -feature-cttest:
+            module: 'ops'
+            platform: 'genericx86-64'
+
+    publishers:
+        - conditional-junit
+        - post-docker-clean
 
 - job-group:
     name: 'ops-ft-framework-jobs'
