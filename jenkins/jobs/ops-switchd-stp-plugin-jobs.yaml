@@ -1,0 +1,37 @@
+- job-template:
+    name: 'ops-switchd-stp-plugin-check-{platform}'
+    node: openswitch
+
+    wrappers:
+        - build-timeout:
+            timeout: 120
+        - timestamps
+        - ansicolor
+
+    builders:
+        - revoke-sudo
+        - module-build-branch:
+            module: 'ops-switchd-stp-plugin'
+            platform: '{platform}'
+
+- job-template:
+    name: 'ops-switchd-stp-plugin-gate-{platform}'
+    node: openswitch
+
+    wrappers:
+        - build-timeout:
+            timeout: 120
+        - timestamps
+        - ansicolor
+
+    builders:
+        - revoke-sudo
+        - module-build-branch:
+            module: 'ops-switchd-stp-plugin'
+            platform: '{platform}'
+
+- job-group:
+    name: 'ops-switchd-stp-plugin-jobs'
+    jobs:
+      - 'ops-switchd-stp-plugin-check-{platform}'
+      - 'ops-switchd-stp-plugin-gate-{platform}'

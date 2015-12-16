@@ -123,6 +123,9 @@
 - project: openswitch/ops-switchd-p4switch-plugin
   description: OpenSwitch P4 switch OVS plugin
 
+- project: openswitch/ops-switchd-stp-plugin
+  description: OpenSwitch STP OVS plugin
+
 # L2 Daemons
 - project: openswitch/ops-vland
   description: OpenSwitch VLAN Daemon
