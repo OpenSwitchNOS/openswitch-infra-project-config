@@ -216,8 +216,9 @@
       node: 'openswitch'
       platform:
         - genericx86-64
+        - as5712
       jobs:
-        - 'ops-switchd-p4switch-plugin'
+        - 'ops-switchd-p4switch-plugin-jobs'
 
   - project:
       name: openswitch/ops-pmd
