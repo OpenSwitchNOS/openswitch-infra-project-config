@@ -1,5 +1,5 @@
 - job-template:
-   name: 'ops-switchd-p4switch-plugin-jobs-check-{platform}'
+   name: 'ops-switchd-p4switch-plugin-check-{platform}'
    node: openswitch
 
    wrappers:
@@ -11,11 +11,11 @@
    builders:
        - revoke-sudo
        - module-build-branch:
-           module: 'ops-switchd-p4switch-plugin-jobs'
+           module: 'ops-switchd-p4switch-plugin'
            platform: '{platform}'
 
 - job-template:
-   name: 'ops-switchd-p4switch-plugin-jobs-gate-{platform}'
+   name: 'ops-switchd-p4switch-plugin-gate-{platform}'
    node: openswitch
 
    wrappers:
@@ -27,11 +27,11 @@
    builders:
        - revoke-sudo
        - module-build-branch:
-           module: 'ops-switchd-p4switch-plugin-jobs'
+           module: 'ops-switchd-p4switch-plugin'
            platform: '{platform}'
 
 - job-group:
-   name: 'ops-switchd-p4switch-plugin-jobs-jobs'
+   name: 'ops-switchd-p4switch-plugin-jobs'
    jobs:
-     - 'ops-switchd-p4switch-plugin-jobs-check-{platform}'
-     - 'ops-switchd-p4switch-plugin-jobs-gate-{platform}'
+     - 'ops-switchd-p4switch-plugin-check-{platform}'
+     - 'ops-switchd-p4switch-plugin-gate-{platform}'

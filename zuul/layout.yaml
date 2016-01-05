@@ -511,6 +511,9 @@ projects:
       - name: module-build
         module: ops-switchd-p4switch-plugin
         platform: genericx86-64
+      - name: module-build
+        module: ops-switchd-p4switch-plugin
+        platform: as5712
 
   - name: openswitch/ops-pmd
     template:
