@@ -129,6 +129,9 @@
 - project: openswitch/ops-supportability
   description: OpenSwitch Supportability Features
 
+- project: openswitch/ops-ipapps
+  description: OpenSwitch IP Applications Features
+
 
 # L2 Daemons
 - project: openswitch/ops-vland
