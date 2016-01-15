@@ -228,7 +228,7 @@
            then
              cd $WORKSPACE
              rm -rf src/ops
-             echo "===================  Building Feature Tests from ops:$OPS_BUILD_BRANCH =================== "
+             echo "===================  Building Feature Tests from ops =================== "
              git clone -b $OPS_BRANCH https://git.openswitch.net/openswitch/ops src/ops
              make bake cmake-native
              make devenv_import ops $PWD/src/ops
@@ -320,7 +320,7 @@
            then
              cd $WORKSPACE
              rm -rf src/ops
-             echo "===================  Building Feature Tests from ops:$OPS_BUILD_BRANCH =================== "
+             echo "===================  Building Feature Tests from ops =================== "
              git clone -b $OPS_BRANCH https://git.openswitch.net/openswitch/ops src/ops
              make fs
              make devenv_ct_init
