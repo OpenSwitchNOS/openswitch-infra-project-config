@@ -157,6 +157,12 @@
              - release
     node: vsi
 
+    scm:
+        - git:
+            url: http://git.openswitch.net/openswitch/ops-build
+            branches:
+              - origin/release
+
     wrappers:
         - build-timeout:
             timeout: 1240
@@ -169,9 +175,6 @@
                   - 'ffc18805-a3da-4771-918a-eaaa6a1a0c70'
 
     builders:
-        - ops-distclean
-        - branch-git-prep:
-            branch: release
         - shell: |
             # Hack to enable webui on the periodic builds until we create a reliable recipe for it
             sed -i -e 's/lighttpd/ops-webui/' yocto/openswitch/meta-distro-openswitch/recipes-core/packagegroups/packagegroup-openswitch.bb
