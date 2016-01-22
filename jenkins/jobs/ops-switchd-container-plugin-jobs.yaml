@@ -25,7 +25,7 @@
 
 - job:
     name: 'ops-switchd-container-plugin-gate-genericx86-64'
-    node: vsi
+    node: slave-vsi-14.openswitch.net
 
     wrappers:
         - build-timeout:
@@ -35,7 +35,7 @@
         - module-build-branch:
             module: 'ops-switchd-container-plugin'
             platform: 'genericx86-64'
-        - module-cttest:
+        - module-cttest-on-switchd-container-plugin:
             module: 'ops-switchd-container-plugin'
             platform: 'genericx86-64'
 
