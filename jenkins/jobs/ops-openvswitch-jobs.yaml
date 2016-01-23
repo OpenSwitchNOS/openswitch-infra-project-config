@@ -40,6 +40,7 @@
             platform: 'genericx86-64'
         - shell: |
             #!/bin/bash -x
+            if [[ "$ZUUL_BRANCH" == feature/* ]] ; then echo "Skipping for all feature branches" ; exit 0 ; fi
             set -e
             cd src/ops-openvswitch/build
             make dist-docs

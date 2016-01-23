@@ -54,6 +54,7 @@
     builders:
       - shell: |
           #!/bin/bash -x
+          if [[ "$ZUUL_BRANCH" == feature/* ]] ; then echo "Skipping for all feature branches" ; exit 0 ; fi
           make configure {platform}
           BUILD_NUMBER=$(date -u +"%Y%m%d%H")
           make header
@@ -70,6 +71,8 @@
     name: ops-meta-ide
     builders:
       - shell: |
+          #!/bin/bash -x
+          if [[ "$ZUUL_BRANCH" == feature/* ]] ; then echo "Skipping for all feature branches" ; exit 0 ; fi
           make bake meta-ide-support
 
 - builder:
@@ -78,6 +81,7 @@
     builders:
       - shell: |
           #!/bin/bash -x
+          if [[ "$ZUUL_BRANCH" == feature/* ]] ; then echo "Skipping for all feature branches" ; exit 0 ; fi
           echo "Synchronizing shared states"
           cd build/sstate-cache
           rsync --ignore-existing --exclude='*.done' --size-only -avzL -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --progress ?? `lsb_release -s -i`-`lsb_release -s -r` static.openswitch.net:/srv/static/sstate || true
@@ -88,6 +92,7 @@
     builders:
       - shell: |
           #!/bin/bash -x
+          if [[ "$ZUUL_BRANCH" == feature/* ]] ; then echo "Skipping for all feature branches" ; exit 0 ; fi
           echo "Synchronizing download archive"
           cd build/downloads
           rsync --size-only -avz -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --progress *.tar.* *.zip --exclude=*.done static.openswitch.net:/srv/static/archive || true
@@ -133,6 +138,7 @@
     builders:
       - shell: |
            #!/bin/bash -x
+           if [[ "$ZUUL_BRANCH" == feature/* ]] ; then echo "Skipping for all feature branches" ; exit 0 ; fi
            set +x
            # Remove the devenv if previously existed, otherwise if the recipe change version we will have conflicts
            if grep -q {module} .devenv ; then
@@ -217,6 +223,7 @@
     builders:
       - shell: |
            #!/bin/bash -x
+           if [[ "$ZUUL_BRANCH" == feature/* ]] ; then echo "Skipping for all feature branches" ; exit 0 ; fi
            set -e
            if git ls-remote https://git.openswitch.net/openswitch/ops | grep -swq "$ZUUL_BRANCH" ; then
              OPS_BRANCH=$ZUUL_BRANCH
@@ -252,6 +259,7 @@
     builders:
       - shell: |
            #!/bin/bash -x
+           if [[ "$ZUUL_BRANCH" == feature/* ]] ; then echo "Skipping for all feature branches" ; exit 0 ; fi
            set -e
            rm -rf build/*-test-results.xml
            cd src/{module}
@@ -307,6 +315,7 @@
     builders:
       - shell: |
            #!/bin/bash -x
+           if [[ "$ZUUL_BRANCH" == feature/* ]] ; then echo "Skipping for all feature branches" ; exit 0 ; fi
            set -e
            if git ls-remote https://git.openswitch.net/openswitch/ops | grep -swq "$ZUUL_BRANCH" ; then
              OPS_BRANCH=$ZUUL_BRANCH
@@ -1114,6 +1123,7 @@
     builders:
       - shell: |
           #!/bin/bash -x
+          if [[ "$ZUUL_BRANCH" == feature/* ]] ; then echo "Skipping for all feature branches" ; exit 0 ; fi
           set -e
           rm -rf $WORKSPACE/src/{depended-repo}
           git clone https://git.openswitch.net/openswitch/{depended-repo} $WORKSPACE/src/{depended-repo}
