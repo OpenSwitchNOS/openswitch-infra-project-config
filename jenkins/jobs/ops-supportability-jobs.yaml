@@ -5,9 +5,14 @@
     wrappers:
         - build-timeout:
             timeout: 120
+        - timestamps
+        - ansicolor
 
     builders:
         - revoke-sudo
+        - module-build-branch:
+            module: 'ops-supportability-config'
+            platform: '{platform}'
 
 - job-template:
     name: 'ops-supportability-gate-{platform}'
@@ -16,9 +21,14 @@
     wrappers:
         - build-timeout:
             timeout: 120
+        - timestamps
+        - ansicolor
 
     builders:
         - revoke-sudo
+        - module-build-branch:
+            module: 'ops-supportaility'
+            platform: '{platform}'
 
 - job-group:
    name: 'ops-supportability-jobs'
