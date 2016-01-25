@@ -337,7 +337,7 @@
         - 'ops-hw-vtep-jobs'
 
   - project:
-      name: openswitch/supportability
+      name: openswitch/ops-supportability
       node: 'openswitch'
       platform:
         - as5712
