@@ -8,6 +8,9 @@
 
     builders:
         - revoke-sudo
+    - module-build-branch:
+            module: 'ops-supportability'
+            platform: '{platform}'
 
 - job-template:
     name: 'ops-supportability-gate-{platform}'
