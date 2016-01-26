@@ -45,9 +45,9 @@
         - module-build-branch:
             module: 'ops-restd'
             platform: 'genericx86-64'
-        - module-cttest:
-            module: 'ops-restd'
-            platform: 'genericx86-64'
+#        - module-cttest:
+#            module: 'ops-restd'
+#            platform: 'genericx86-64'
         - swagger-api:
             depended-repo: 'ops'
             files: 'ops-restapi.json'
