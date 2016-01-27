@@ -1,4 +1,3 @@
-
 OpenStack Infra Config Files
 ============================
 
