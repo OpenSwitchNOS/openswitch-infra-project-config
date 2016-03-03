@@ -318,19 +318,24 @@
       - shell: |
            #!/bin/bash -x
            set -e
+
+           # Configuration:
            COV_CONF_FILE="src/{module}/ft_ct_coverage"        # Configuration file. If it exists then CT/FT coverage will be performed.
-           COV_MINIMUM=80                                        # Minimum default of coverage.
-           COV_REPORT_DIR="coverage"                             # Location where the coverage report data will be placed
+           COV_MINIMUM=80                                     # Minimum default of coverage.
+           COV_REPORT_DIR="coverage"                          # Location where the coverage report data will be placed
            COV_DATA_DIR="src/{module}/"                       # Repo directory where coverage data will be stored (gcda && gcno)
+           touch build/devenv-coverage-enabled                # Configures the build system to compile with coverage flags
 
            if git ls-remote https://git.openswitch.net/openswitch/ops | grep -swq "$ZUUL_BRANCH" ; then
              OPS_BRANCH=$ZUUL_BRANCH
            else
              OPS_BRANCH=master
            fi
+
            rm -rf build/*-test-results.xml
            cd src/{module}
            cat extension.txt
+
            if [ {platform} == "genericx86-64" ]
            then
              cd $WORKSPACE
@@ -349,22 +354,28 @@
                 export VSI_COV_DATA_DIR=$PWD/$COV_DATA_DIR
                 rm -rf $COV_REPORT_DIR
                 mkdir -p $COV_REPORT_DIR
-                lcov --zerocounters --directory $COV_DATA_DIR       # Clear all coverage counters before running the tests
+                lcov --zerocounters --directory $COV_DATA_DIR
+                # This creates a baseline data, which is required to produce precise coverage reports
                 lcov --initial --capture --directory $COV_DATA_DIR --output-file $COV_REPORT_DIR/app_base.info
+             else
+               echo "Code Coverage for FT/CT is not configured at the repo level, skipping coverage report"
              fi
 
-             make devenv_ct_test PY_TEST_ARGS="src/{module} --exitfirst --junit-xml=build/module-test-results.xml" || (make devenv_ct_clean; docker rmi -f $VSI_IMAGE_NAME; exit 1)
-             make devenv_ct_test PY_TEST_ARGS="src/ops --exitfirst --junit-xml=build/feature-test-results.xml" || (make devenv_ct_clean; docker rmi -f $VSI_IMAGE_NAME; exit 1)
+             # Run the Component and Feature Tests
+             # Note: It has been configured to NOT exit on first failure. We want all tests to run to get most possible coverage.
+             make devenv_ct_test PY_TEST_ARGS="src/{module} --junit-xml=build/module-test-results.xml" || (make devenv_ct_clean; docker rmi -f $VSI_IMAGE_NAME;)
+             make devenv_ct_test PY_TEST_ARGS="src/ops --junit-xml=build/feature-test-results.xml" || (make devenv_ct_clean; docker rmi -f $VSI_IMAGE_NAME;)
              test -e .sandbox_uuid && make devenv_ct_clean
              docker images | grep $VSI_IMAGE_NAME && docker rmi -f $VSI_IMAGE_NAME
              sudo chown jenkins.jenkins build/*-test-results.xml
 
+             # Stop debugging to make report output clearer
+             set +x
+
              if [ -f $COV_CONF_FILE ]
              then
-                 # TODO: Implement Branch Analysis
-                 LCOV_NO_BRANCH="--rc lcov_branch_coverage=0"
-                 # Capture the coverage raw data
-                 lcov $LCOV_NO_BRANCH --capture --directory $COV_DATA_DIR --output-file $COV_REPORT_DIR/app_test.info
+                 # This captures the coverage data which is merged with the baseline to produce precise reports
+                 lcov --capture --directory $COV_DATA_DIR --output-file $COV_REPORT_DIR/app_test.info > /dev/null 2>&1
                  LCOV_COV_FILE="app_total.info"        # The file where the coverage data will be placed
                  # Read the configured minimum coverage percentage and exclude patterns from the repo conf file
                  # Configure exclude patterns using wildcars and separated by spaces, e.g to remove gtest and openvswitch files use:
@@ -386,12 +397,18 @@
                  # Check if exclusion pattern is configured and apply it.
                  if [ ! -z "$COV_EXCLUDE_PATTERN" ]
                  then
+                   echo "The configured FT/CT code coverage exclude pattern is: $COV_EXCLUDE_PATTERN"
+                   echo "Going to exclude files from report:"
                    lcov --remove $COV_REPORT_DIR/app_base.info $COV_EXCLUDE_PATTERN --output-file $COV_REPORT_DIR/data_base.info
                    lcov --remove $COV_REPORT_DIR/app_test.info $COV_EXCLUDE_PATTERN --output-file $COV_REPORT_DIR/data_test.info
-                   COV_RESULT=`lcov $LCOV_NO_BRANCH --add-tracefile $COV_REPORT_DIR/data_base.info --add-tracefile $COV_REPORT_DIR/data_test.info --output-file $COV_REPORT_DIR/$LCOV_COV_FILE`
+                   COV_RESULT=`lcov --add-tracefile $COV_REPORT_DIR/data_base.info --add-tracefile $COV_REPORT_DIR/data_test.info --output-file $COV_REPORT_DIR/$LCOV_COV_FILE`
                  else
-                   COV_RESULT=`lcov $LCOV_NO_BRANCH --add-tracefile $COV_REPORT_DIR/app_base.info --add-tracefile $COV_REPORT_DIR/app_test.info --output-file $COV_REPORT_DIR/$LCOV_COV_FILE`
+                   COV_RESULT=`lcov --add-tracefile $COV_REPORT_DIR/app_base.info --add-tracefile $COV_REPORT_DIR/app_test.info --output-file $COV_REPORT_DIR/$LCOV_COV_FILE`
                  fi
+
+                 echo "*** Going to merge baseline data with raw coverage data. ***"
+                 echo "Coverage result after merging with baseline data:"
+                 echo $COV_RESULT
 
                  # Get actual coverage from command output
                  COV_REPORTED=`echo "$COV_RESULT" | sed -rn 's/lines\.\.\.\.\.\.:[[:space:]]([[:digit:]]+).*/\1/p'`
@@ -403,21 +420,21 @@
                  # Generate the HTML report
                  mkdir -p $COV_REPORT_DIR/html
                  cd $COV_REPORT_DIR/html
-                 # TODO: Implement Branch Analysis
-                 genhtml --no-branch-coverage ../$LCOV_COV_FILE
+                 echo "Creating the HTML report"
+                 # TODO: Implement Branch Analysis?
+                 genhtml --no-branch-coverage ../$LCOV_COV_FILE > /dev/null 2>&1
                  cd ../..
 
-                 echo "The configuration file is: $COV_CONF_FILE"
+                 echo ""
+                 echo "**** Coverage result info: ****"
+                 echo ""
                  echo "The configured coverage threshold is: $COV_MINIMUM"
-                 echo "The configured FT/CT code coverage exclude pattern is $COV_EXCLUDE_PATTERN"
-                 echo "The result of the data coverage command is $COV_RESULT"
-                 echo "The actual reported coverage is:"
-                 echo $COV_REPORTED
+                 echo "The configured FT/CT code coverage exclude pattern is: $COV_EXCLUDE_PATTERN"
+                 echo "The actual reported coverage is: $COV_REPORTED"
 
                  if [ "$COV_MINIMUM" -gt "$COV_REPORTED" ]
                  then
                       echo "The code does not have enough coverage"
-                      echo "The location of the coverage report is: $PWD/$COV_REPORT_DIR/html."
                       exit 1
                  else
                       exit 0
@@ -425,7 +442,7 @@
              fi
 
            else
-             echo "Skipping cttest"
+             echo "Skipping coverage report due to unsupported platform"
            fi
 
 - builder:
