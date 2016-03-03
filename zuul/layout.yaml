@@ -500,10 +500,12 @@ projects:
   - name: openswitch/ops-switchd
     template:
       - name: merge-check
-    check:
-      - ops-switchd-check
-    gate:
-      - ops-switchd-gate
+      - name: module-build
+        module: ops-openvswitch
+        platform: genericx86-64
+      - name: module-build
+        module: ops-openvswitch
+        platform: as5712
 
   - name: openswitch/ops-switchd-container-plugin
     template:
