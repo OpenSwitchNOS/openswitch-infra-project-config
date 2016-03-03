@@ -42,6 +42,9 @@
         - module-cttest:
             module: 'ops-lacpd'
             platform: 'genericx86-64'
+        - module-cttest-codecoverage:
+            module: 'ops-lacpd'
+            platform: 'genericx86-64'
 
     publishers:
         - conditional-junit
