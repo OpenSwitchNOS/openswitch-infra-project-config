@@ -336,7 +336,7 @@
            cd src/{module}
            cat extension.txt
 
-           if [ {platform} == "genericx86-64" ]
+           if [ {platform} == "genericx86-64" ] && [ -f $COV_CONF_FILE ]
            then
              cd $WORKSPACE
              rm -rf src/ops
@@ -349,17 +349,12 @@
              echo $VSI_IMAGE_NAME > .image_name
              make export_docker_image $VSI_IMAGE_NAME
 
-             if [ -f $COV_CONF_FILE ]
-             then
-                export VSI_COV_DATA_DIR=$PWD/$COV_DATA_DIR
-                rm -rf $COV_REPORT_DIR
-                mkdir -p $COV_REPORT_DIR
-                lcov --zerocounters --directory $COV_DATA_DIR
-                # This creates a baseline data, which is required to produce precise coverage reports
-                lcov --initial --capture --directory $COV_DATA_DIR --output-file $COV_REPORT_DIR/app_base.info
-             else
-               echo "Code Coverage for FT/CT is not configured at the repo level, skipping coverage report"
-             fi
+             export VSI_COV_DATA_DIR=$PWD/$COV_DATA_DIR
+             rm -rf $COV_REPORT_DIR
+             mkdir -p $COV_REPORT_DIR
+             lcov --zerocounters --directory $COV_DATA_DIR
+             # This creates a baseline data, which is required to produce precise coverage reports
+             lcov --initial --capture --directory $COV_DATA_DIR --output-file $COV_REPORT_DIR/app_base.info
 
              # Run the Component and Feature Tests
              # Note: It has been configured to NOT exit on first failure. We want all tests to run to get most possible coverage.
@@ -372,77 +367,73 @@
              # Stop debugging to make report output clearer
              set +x
 
-             if [ -f $COV_CONF_FILE ]
+             # This captures the coverage data which is merged with the baseline to produce precise reports
+             lcov --capture --directory $COV_DATA_DIR --output-file $COV_REPORT_DIR/app_test.info > /dev/null 2>&1
+             LCOV_COV_FILE="app_total.info"        # The file where the coverage data will be placed
+             # Read the configured minimum coverage percentage and exclude patterns from the repo conf file
+             # Configure exclude patterns using wildcars and separated by spaces, e.g to remove gtest and openvswitch files use:
+             # Exclude_pattern=*gtest* *openvswitch*
+             while read -r line
+             do
+               tmp=`echo "$line" | sed -rn 's/^Minimum_coverage=([0-9]+)$/\1/p'`
+               if [ ! -z "$tmp" ]
+               then
+                 COV_MINIMUM=$tmp
+               fi
+               tmp=`echo "$line" | sed -rn 's/^Exclude_pattern=(.*)$/\1/p'`
+               if [ ! -z "$tmp" ]
+               then
+                 COV_EXCLUDE_PATTERN=$tmp
+               fi
+             done < "$COV_CONF_FILE"
+
+             # Check if exclusion pattern is configured and apply it.
+             if [ ! -z "$COV_EXCLUDE_PATTERN" ]
              then
-                 # This captures the coverage data which is merged with the baseline to produce precise reports
-                 lcov --capture --directory $COV_DATA_DIR --output-file $COV_REPORT_DIR/app_test.info > /dev/null 2>&1
-                 LCOV_COV_FILE="app_total.info"        # The file where the coverage data will be placed
-                 # Read the configured minimum coverage percentage and exclude patterns from the repo conf file
-                 # Configure exclude patterns using wildcars and separated by spaces, e.g to remove gtest and openvswitch files use:
-                 # Exclude_pattern=*gtest* *openvswitch*
-                 while read -r line
-                 do
-                   tmp=`echo "$line" | sed -rn 's/^Minimum_coverage=([0-9]+)$/\1/p'`
-                   if [ ! -z "$tmp" ]
-                   then
-                       COV_MINIMUM=$tmp
-                   fi
-                   tmp=`echo "$line" | sed -rn 's/^Exclude_pattern=(.*)$/\1/p'`
-                   if [ ! -z "$tmp" ]
-                   then
-                     COV_EXCLUDE_PATTERN=$tmp
-                   fi
-                 done < "$COV_CONF_FILE"
-
-                 # Check if exclusion pattern is configured and apply it.
-                 if [ ! -z "$COV_EXCLUDE_PATTERN" ]
-                 then
-                   echo "The configured FT/CT code coverage exclude pattern is: $COV_EXCLUDE_PATTERN"
-                   echo "Going to exclude files from report:"
-                   lcov --remove $COV_REPORT_DIR/app_base.info $COV_EXCLUDE_PATTERN --output-file $COV_REPORT_DIR/data_base.info
-                   lcov --remove $COV_REPORT_DIR/app_test.info $COV_EXCLUDE_PATTERN --output-file $COV_REPORT_DIR/data_test.info
-                   COV_RESULT=`lcov --add-tracefile $COV_REPORT_DIR/data_base.info --add-tracefile $COV_REPORT_DIR/data_test.info --output-file $COV_REPORT_DIR/$LCOV_COV_FILE`
-                 else
-                   COV_RESULT=`lcov --add-tracefile $COV_REPORT_DIR/app_base.info --add-tracefile $COV_REPORT_DIR/app_test.info --output-file $COV_REPORT_DIR/$LCOV_COV_FILE`
-                 fi
-
-                 echo "*** Going to merge baseline data with raw coverage data. ***"
-                 echo "Coverage result after merging with baseline data:"
-                 echo $COV_RESULT
-
-                 # Get actual coverage from command output
-                 COV_REPORTED=`echo "$COV_RESULT" | sed -rn 's/lines\.\.\.\.\.\.:[[:space:]]([[:digit:]]+).*/\1/p'`
-                 if [ -z "$COV_REPORTED" ]
-                 then
-                    COV_REPORTED=0
-                 fi
-
-                 # Generate the HTML report
-                 mkdir -p $COV_REPORT_DIR/html
-                 cd $COV_REPORT_DIR/html
-                 echo "Creating the HTML report"
-                 # TODO: Implement Branch Analysis?
-                 genhtml --no-branch-coverage ../$LCOV_COV_FILE > /dev/null 2>&1
-                 cd ../..
-
-                 echo ""
-                 echo "**** Coverage result info: ****"
-                 echo ""
-                 echo "The configured coverage threshold is: $COV_MINIMUM"
-                 echo "The configured FT/CT code coverage exclude pattern is: $COV_EXCLUDE_PATTERN"
-                 echo "The actual reported coverage is: $COV_REPORTED"
-
-                 if [ "$COV_MINIMUM" -gt "$COV_REPORTED" ]
-                 then
-                      echo "The code does not have enough coverage"
-                      exit 1
-                 else
-                      exit 0
-                 fi
+               echo "The configured FT/CT code coverage exclude pattern is: $COV_EXCLUDE_PATTERN"
+               echo "Going to exclude files from report:"
+               lcov --remove $COV_REPORT_DIR/app_base.info $COV_EXCLUDE_PATTERN --output-file $COV_REPORT_DIR/data_base.info
+               lcov --remove $COV_REPORT_DIR/app_test.info $COV_EXCLUDE_PATTERN --output-file $COV_REPORT_DIR/data_test.info
+               COV_RESULT=`lcov --add-tracefile $COV_REPORT_DIR/data_base.info --add-tracefile $COV_REPORT_DIR/data_test.info --output-file $COV_REPORT_DIR/$LCOV_COV_FILE`
+             else
+               COV_RESULT=`lcov --add-tracefile $COV_REPORT_DIR/app_base.info --add-tracefile $COV_REPORT_DIR/app_test.info --output-file $COV_REPORT_DIR/$LCOV_COV_FILE`
              fi
 
+             echo "*** Going to merge baseline data with raw coverage data. ***"
+             echo "Coverage result after merging with baseline data:"
+             echo $COV_RESULT
+
+             # Get actual coverage from command output
+             COV_REPORTED=`echo "$COV_RESULT" | sed -rn 's/lines\.\.\.\.\.\.:[[:space:]]([[:digit:]]+).*/\1/p'`
+             if [ -z "$COV_REPORTED" ]
+             then
+               COV_REPORTED=0
+             fi
+
+             # Generate the HTML report
+             mkdir -p $COV_REPORT_DIR/html
+             cd $COV_REPORT_DIR/html
+             echo "Creating the HTML report"
+             # TODO: Implement Branch Analysis?
+             genhtml --no-branch-coverage ../$LCOV_COV_FILE > /dev/null 2>&1
+             cd ../..
+
+             echo ""
+             echo "**** Coverage result info: ****"
+             echo ""
+             echo "The configured coverage threshold is: $COV_MINIMUM"
+             echo "The configured FT/CT code coverage exclude pattern is: $COV_EXCLUDE_PATTERN"
+             echo "The actual reported coverage is: $COV_REPORTED"
+
+             if [ "$COV_MINIMUM" -gt "$COV_REPORTED" ]
+             then
+               echo "The code does not have enough coverage"
+               exit 1
+             else
+               exit 0
+             fi
            else
-             echo "Skipping coverage report due to unsupported platform"
+             echo "Coverage config file not found. Skipping coverage report"
            fi
 
 - builder:
