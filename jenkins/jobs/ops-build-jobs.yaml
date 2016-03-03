@@ -102,7 +102,7 @@
     properties:
       - inject:
           properties-content: |
-            TYPE=periodic
+            TYPE=master/periodic
     wrappers:
         - build-timeout:
             timeout: 120
@@ -134,7 +134,7 @@
             site: static.openswitch.net
             files:
               - target: 'archive/artifacts'
-                source: 'periodic/**/*'
+                source: 'master/**/*'
                 copy-after-failure: false
                 keep-hierarchy: true
         - conditional-junit
@@ -156,7 +156,7 @@
     properties:
       - inject:
           properties-content: |
-            TYPE=release
+            TYPE=release/periodic
 
     wrappers:
         - build-timeout:
