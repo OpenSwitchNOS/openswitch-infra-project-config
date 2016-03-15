@@ -671,7 +671,7 @@
     name: scp-artifacts
     builders:
       - shell: |
-          VERSION_STRING=ops-$BRANCH-$(cat .version_string)
+          VERSION_STRING=$(cat .version_string)
           cd $TYPE; scp -r $VERSION_STRING static.openswitch.net:/srv/static/archive/artifacts/$TYPE/.
 
 - builder:
