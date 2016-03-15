@@ -1,0 +1,14 @@
+- job: 
+    name: 'test'
+    node: openswitch
+
+    wrappers:
+        - build-timeout:
+            timeout: 120
+
+    builders:
+        - revoke-sudo
+        - ops-distclean
+        - gerrit-git-prep
+        - ops-build:
+            platform: '{platform}'
