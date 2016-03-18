@@ -214,3 +214,6 @@
 #Checkmk-agent
 - project: openswitch/ops-checkmk-agent
   description: Check_mk Agent
+
+- project: openswitch/ops-symondd
+  description: OpenSwitch System Monitoring Daemon
