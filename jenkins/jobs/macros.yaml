@@ -472,6 +472,42 @@
            fi
 
 - builder:
+    name: topology_test_component
+    builders:
+      - shell: |
+           #!/bin/bash -x
+           set -e
+           #cd src/{module}
+           if [ {platform} == "genericx86-64" ]
+           then
+             cd $WORKSPACE
+             make fs
+             make testenv_init
+             make testenv_run component {module}
+             sudo chown jenkins.jenkins build/test/component/*-test-results.xml
+           else
+             echo "Skipping topology test component because of one of reasons: 1. Not a genericx86-64 platform; 2. Commit files are all in .md extension"
+           fi
+
+- builder:
+    name: topology_test_feature
+    builders:
+      - shell: |
+           #!/bin/bash -x
+           set -e
+           #cd src/{module}
+           if [ {platform} == "genericx86-64" ]
+           then
+             cd $WORKSPACE
+             make fs
+             make testenv_init
+             make testenv_run feature {module}
+             sudo chown jenkins.jenkins build/test/component/*-test-results.xml
+           else
+             echo "Skipping topology test component because of one of reasons: 1. Not a genericx86-64 platform; 2. Commit files are all in .md extension"
+           fi
+
+- builder:
     name: jekyll-build
     builders:
       - shell: |
