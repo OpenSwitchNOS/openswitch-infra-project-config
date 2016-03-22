@@ -7,3 +7,5 @@
         - shell: |
             ls
 
+    publishers:
+        - post-ws-clean

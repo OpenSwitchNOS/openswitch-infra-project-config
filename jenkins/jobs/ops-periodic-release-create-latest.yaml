@@ -23,3 +23,6 @@
             ssh static.openswitch.net "ln -s $dir/$build_v $dir/latest"
             ssh static.openswitch.net "cp -rf $dir/$build_v/as5712/changelog.manifest $dir/latest/"
             ssh static.openswitch.net "echo $build_v > $dir/latest/build_v"
+
+    publishers:
+        - post-ws-clean

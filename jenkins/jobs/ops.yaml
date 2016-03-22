@@ -11,6 +11,9 @@
     builders:
         - revoke-sudo
 
+    publishers:
+        - post-ws-clean
+
 - job:
     name: 'ops-gate'
     node: vsi
@@ -32,7 +35,6 @@
         - feature-cttest:
             module: 'ops'
             platform: 'genericx86-64'
-
 
     publishers:
         - conditional-junit
