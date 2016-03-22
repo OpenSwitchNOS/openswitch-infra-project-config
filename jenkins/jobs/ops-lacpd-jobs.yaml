@@ -29,11 +29,6 @@
 - job:
     name: 'ops-lacpd-gate-genericx86-64'
     node: vsi
-    properties:
-      - inject:
-          properties-content: |
-            COV_MODULE=ops-lacpd
-            COV_BRANCH=feature/code_cov
     wrappers:
         - build-timeout:
             timeout: 180
@@ -45,7 +40,9 @@
             module: 'ops-lacpd'
             platform: 'genericx86-64'
         - lcov-compile
+            module: 'ops-lacpd'
         - lcov-coverage-run
+            module: 'ops-lacpd'
     publishers:
         - conditional-junit
         - conditional-htmlreports
