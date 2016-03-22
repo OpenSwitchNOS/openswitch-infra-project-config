@@ -29,7 +29,14 @@
         - module-build-branch:
             module: 'ops-passwd-srv'
             platform: '{platform}'
-
+        - lcov-compile:
+            module: 'ops-lacpd'
+        - lcov-coverage-run:
+            module: 'ops-lacpd'
+    publishers:
+        - conditional-junit
+        - conditional-htmlreports
+        
 - job-group:
     name: 'ops-passwd-srv-jobs'
     jobs:
