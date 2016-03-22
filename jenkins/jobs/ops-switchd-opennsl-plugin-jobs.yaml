@@ -10,6 +10,9 @@
             module: 'ops-switchd-opennsl-plugin'
             platform: '{platform}'
 
+     publishers:
+         - post-ws-clean
+
 - job:
     name: 'ops-switchd-opennsl-plugin-gate-as5712'
     node: openswitch
@@ -22,6 +25,9 @@
         - module-build-branch:
             module: 'ops-switchd-opennsl-plugin'
             platform: 'as5712'
+
+    publishers:
+        - post-ws-clean
 
 - job:
     name: 'ops-switchd-opennsl-plugin-gate-genericx86-64'
@@ -42,6 +48,7 @@
     publishers:
         - conditional-junit
         - post-docker-clean
+        - post-ws-clean
 
 - job-group:
     name: 'ops-switchd-opennsl-plugin-jobs'
