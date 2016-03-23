@@ -35,13 +35,15 @@
         - module-build-branch:
             module: 'ops-cli'
             platform: 'genericx86-64'
-        - module-cttest:
-            module: 'ops-cli'
+        - topology_test:
             platform: 'genericx86-64'
+            test: 'component'
+            module: 'ops-cli'
     publishers:
-        - conditional-junit
-        - post-docker-clean
-        - post-ws-clean
+        - publish-topologyTest-results
+#        - conditional-junit
+#        - post-docker-clean
+#        - post-ws-clean
 
 - job-group:
     name: 'ops-cli-jobs'
