@@ -241,6 +241,62 @@
            make bake {module}
 
 - builder:
+    name: module-build-branch-ondemand
+
+    builders:
+      - shell: |
+           #!/bin/bash -x
+           set +x
+           # Remove the devenv if previously existed, otherwise if the recipe change version we will have conflicts
+           if grep -q {module} .devenv ; then
+             make devenv_rm {module}
+           fi
+           set -e
+           # If we already have a git repo, avoid nuking them to save build time
+           if [[ ! -e .git ]]; then
+           # I am temp adding this to resolve issue: fatal: A branch named 'feature/intervlan' already exists."
+             rm -fr .[^.]* *
+             if [ -z "$Feature_BranchName" ]; then
+             git clone -b $Feature_BranchName https://git.openswitch.net/openswitch/ops-build .
+             else
+             echo "Bad Input Arguments, Please provide a Git Branch name to start with"
+             fi
+           else
+             # Move to master branch
+             git reset --hard
+             git checkout master
+             git pull
+             if [ "$Feature_BranchName" != "master" ] ; then
+               # If the branch already existed, remove it
+               if git branch | grep -wq $Feature_BranchName  ; then
+                 git branch -D $Feature_BranchName
+               fi
+               git checkout -b $Feature_BranchName --track origin/$Feature_BranchName
+             fi
+           fi
+
+           # Setup the shared state local cache
+           export SSTATE_DIR=/mnt/jenkins/workspace/sstate-cache
+           mkdir -p /mnt/jenkins/workspace/sstate-cache
+
+           # Check if we need to configure
+           if [ ! -f .platform ] ; then
+             make configure {platform}
+           fi
+
+           # Import and build module
+           mkdir -p src/{module}
+           cd src/{module}
+           /usr/local/jenkins/slave_scripts/gerrit-git-prep.sh https://review.openswitch.net git://git.openswitch.net
+           git diff-tree --no-commit-id --name-only -r refs/heads/master > extension.txt
+           cd ../..
+           # Trigger building of some basic recipe to get the recipe environment working, since devtool is not that good yet...
+           make bake cmake-native
+           make devenv_import {module} $PWD/src/{module}
+           make bake {module}
+
+
+- builder:
     name: feature-cttest-for-ops-build
     builders:
       - shell: |
@@ -281,11 +337,6 @@
       - shell: |
            #!/bin/bash -x
            set -e
-           #if git ls-remote https://git.openswitch.net/openswitch/ops | grep -swq "$ZUUL_BRANCH" ; then
-           #  OPS_BRANCH=$ZUUL_BRANCH
-           #else
-           #  OPS_BRANCH=master
-           #fi
            rm -rf build/*-test-results.xml
            if [ {platform} == "genericx86-64" ] || [ {platform} == "p4" ]
            then

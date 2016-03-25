@@ -112,20 +112,14 @@
             name: Repositories_List
             default:
             description: "Please give the list of repositories to fetch the above given Feature Branch in comma separated values, for example: ops-aaa-utils,ops-portd,ops-cli "
-       - string:
-            name: PY_TEST_ARGS
-            default:
-            description: "Please provide your Test Args"
     wrappers:
         - workspace-cleanup
         - build-timeout:
             timeout: 180
-
     builders:
         - ops-distclean
         - gerrit-git-prep
-        - ops-build:
-            platform: 'genericx86-64'
+        - module-build-branch-ondemand:
         - ops-meta-ide
         - check-docker-state
         - clear-opsTest-results
@@ -134,7 +128,6 @@
         - shared-states
         - download-caches
         - cp-opsTest-results
-
     publishers:
         - conditional-junit
         - post-docker-clean
