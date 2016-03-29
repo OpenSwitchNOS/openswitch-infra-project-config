@@ -39,19 +39,21 @@
         - module-build-branch:
             module: 'ops-intfd'
             platform: 'genericx86-64'
-        - module-cttest:
+        - topology_test:
             module: 'ops-intfd'
             platform: 'genericx86-64'
+            test: 'component'
         - lcov-compile:
             module: 'ops-intfd'
         - lcov-coverage-run:
             module: 'ops-intfd'
 
     publishers:
-        - conditional-junit
-        - conditional-htmlreports
-        - post-docker-clean
-        - post-ws-clean
+#        - conditional-junit
+#        - conditional-htmlreports
+#        - post-docker-clean
+#        - post-ws-clean
+        - publish-topologyTest-results
 
 - job-group:
     name: 'ops-intfd-jobs'
