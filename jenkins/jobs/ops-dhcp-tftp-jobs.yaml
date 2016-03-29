@@ -41,21 +41,22 @@
             platform: 'genericx86-64'
         - check-docker-state
         - clear-test-results
-        - module-cttest:
+        - cp-test-results
+        - topology_test:
             module: 'ops-dhcp-tftp'
             platform: 'genericx86-64'
-        - cp-test-results
+            test: 'component'
         - lcov-compile:
             module: 'ops-dhcp-tftp'
         - lcov-coverage-run:
             module: 'ops-dhcp-tftp'
 
     publishers:
-        - conditional-junit
-        - conditional-htmlreports
-        - post-docker-clean
-        - publish-test-results-on-failure
-        - post-ws-clean
+#        - conditional-junit
+#        - post-docker-clean
+#        - conditional-htmlreports
+#        - post-ws-clean
+        - publish-topologyTest-results
 
 - job-group:
     name: 'ops-dhcp-tftp-jobs'

@@ -38,16 +38,16 @@
             platform: 'genericx86-64'
         - check-docker-state
         - clear-test-results
-        - module-cttest:
+        - cp-test-results
+        - topology_test:
             module: 'ops-checkmk-agent'
             platform: 'genericx86-64'
-        - cp-test-results
-
+            test: 'component'
     publishers:
-        - conditional-junit
-        - post-docker-clean
-        - publish-test-results-on-failure
-        - post-ws-clean
+#        - conditional-junit
+#        - post-docker-clean
+#        - post-ws-clean
+        - publish-topologyTest-results
 
 - job-group:
     name: 'ops-checkmk-agent-jobs'
