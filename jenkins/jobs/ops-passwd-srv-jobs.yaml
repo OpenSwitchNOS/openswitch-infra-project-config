@@ -34,7 +34,7 @@
         - lcov-coverage-run:
             module: 'ops-passwd-srv'
     publishers:
-        - conditional-junit
+        - conditional-publish-test-results
         - conditional-htmlreports
         
 - job-group:

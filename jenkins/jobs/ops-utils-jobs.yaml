@@ -32,7 +32,7 @@
         - lcov-coverage-run:
             module: 'ops-utils'
     publishers:
-        - conditional-junit
+        - conditional-publish-test-results
         - conditional-htmlreports
         - post-ws-clean
 

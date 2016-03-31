@@ -49,11 +49,11 @@
             module: 'ops-restd'
             platform: 'genericx86-64'
         - check-docker-state
-        - clear-test-results
-        - module-cttest:
+        - clear-test-logs
+        - module-test:
             module: 'ops-restd'
             platform: 'genericx86-64'
-        - cp-test-results
+        - cp-test-logs
         - swagger-api:
             depended-repo: 'ops'
             files: 'ops-restapi.json'
@@ -61,9 +61,9 @@
     publishers:
         - simple-scp:
             dest: 'api/rest/'
-        - conditional-junit
-        - post-docker-clean
-        - publish-test-results-on-failure
+        - conditional-publish-test-results
+        - archive-syslog
+        - archive-test-logs-on-failure
         - post-ws-clean
 
 - job-group:

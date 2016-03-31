@@ -35,13 +35,13 @@
         - module-build-branch:
             module: 'ops-switchd-opennsl-plugin'
             platform: 'genericx86-64'
-        - module-cttest:
+        - module-test:
             module: 'ops-switchd-opennsl-plugin'
             platform: 'genericx86-64'
 
     publishers:
-        - conditional-junit
-        - post-docker-clean
+        - conditional-publish-test-results
+        - archive-syslog
 
 - job-group:
     name: 'ops-switchd-opennsl-plugin-jobs'

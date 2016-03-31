@@ -24,7 +24,7 @@
         - lcov-coverage-run:
             module: 'ops-hw-vtep'
     publishers:
-        - conditional-junit
+        - conditional-publish-test-results
         - conditional-htmlreports
 
 - job-group:

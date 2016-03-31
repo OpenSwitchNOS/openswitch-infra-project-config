@@ -37,16 +37,16 @@
             module: 'ops-checkmk-agent'
             platform: 'genericx86-64'
         - check-docker-state
-        - clear-test-results
-        - module-cttest:
+        - clear-test-logs
+        - module-test:
             module: 'ops-checkmk-agent'
             platform: 'genericx86-64'
-        - cp-test-results
+        - cp-test-logs
 
     publishers:
-        - conditional-junit
-        - post-docker-clean
-        - publish-test-results-on-failure
+        - conditional-publish-test-results
+        - archive-syslog
+        - archive-test-logs-on-failure
         - post-ws-clean
 
 - job-group:

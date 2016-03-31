@@ -26,13 +26,13 @@
         - module-build-branch:
             module: 'ops-supportability'
             platform: 'as5712'
-        - module-cttest:
+        - module-test:
             module: 'ops-supportability'
             platform: 'as5712'
 
     publishers:
-        - conditional-junit
-        - post-docker-clean
+        - conditional-publish-test-results
+        - archive-syslog
         - post-ws-clean
 
 - job:
@@ -48,21 +48,21 @@
             module: 'ops-supportability'
             platform: 'genericx86-64'
         - check-docker-state
-        - clear-test-results
-        - module-cttest:
+        - clear-test-logs
+        - module-test:
             module: 'ops-supportability'
             platform: 'genericx86-64'
-        - cp-test-results
+        - cp-test-logs
         - lcov-compile:
             module: 'ops-supportability'
         - lcov-coverage-run:
             module: 'ops-supportability'
 
     publishers:
-        - conditional-junit
+        - conditional-publish-test-results
         - conditional-htmlreports
-        - post-docker-clean
-        - publish-test-results-on-failure
+        - archive-syslog
+        - archive-test-logs-on-failure
         - post-ws-clean
 
 - job-group:

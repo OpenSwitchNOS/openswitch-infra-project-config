@@ -63,10 +63,9 @@
               echo {platform} > .platform_in_archive
           fi
           BUILD_NUMBER=$(date -u +"%Y%m%d%H")
-          make header
+          export SSTATE_DIR=/mnt/jenkins/workspace/sstate-cache
           mkdir -p /mnt/jenkins/workspace/sstate-cache
-          rm -Rf build/sstate-cache
-          ln -sf /mnt/jenkins/workspace/sstate-cache build/sstate-cache
+          make header
           cd build
           BUILD_VERSION=$(../yocto/poky/bitbake/bin/bitbake -e | grep DISTRO_VERSION= | cut -d\" -f 2)
           cd ..
@@ -78,7 +77,7 @@
               echo ""
           fi
           make
-         
+
 - builder:
     name: ops-build-ondemand
     builders:
@@ -92,10 +91,9 @@
               make configure {platform}
           fi
           BUILD_NUMBER=$(date -u +"%Y%m%d%H")
-          make header
+          export SSTATE_DIR=/mnt/jenkins/workspace/sstate-cache
           mkdir -p /mnt/jenkins/workspace/sstate-cache
-          rm -Rf build/sstate-cache
-          ln -sf /mnt/jenkins/workspace/sstate-cache build/sstate-cache
+          make header
           cd build
           BUILD_VERSION=$(../yocto/poky/bitbake/bin/bitbake -e | grep DISTRO_VERSION= | cut -d\" -f 2)
           cd ..
@@ -117,8 +115,7 @@
           BUILD_NUMBER=$(date -u +"%Y%m%d%H")
           make header
           mkdir -p /mnt/jenkins/workspace/sstate-cache
-          rm -Rf build/sstate-cache
-          ln -sf /mnt/jenkins/workspace/sstate-cache build/sstate-cache
+          export SSTATE_DIR=/mnt/jenkins/workspace/sstate-cache
           echo "ops-$tag_v-$BRANCH" > .version_string
           make
 
@@ -244,129 +241,47 @@
            make bake {module}
 
 - builder:
-    name: feature-cttest-for-ops-build
+    name: run-legacy-feature-test
     builders:
       - shell: |
            #!/bin/bash -x
            set -e
-           if git ls-remote https://git.openswitch.net/openswitch/ops | grep -swq "$ZUUL_BRANCH" ; then
-             OPS_BRANCH=$ZUUL_BRANCH
-           else
-             OPS_BRANCH=master
-           fi
-           rm -rf build/*-test-results.xml
+           rm -rf build/test/legacy/test-results.xml
            if [ {platform} == "genericx86-64" ] || [ {platform} == "p4" ]
            then
-             cd $WORKSPACE
-
-             rm -rf src/ops
-             echo "===================  Building Feature Tests from ops:$OPS_BUILD_BRANCH =================== "
-             git clone -b $OPS_BRANCH https://git.openswitch.net/openswitch/ops src/ops
-             make devenv_import ops $PWD/src/ops
-             make bake ops
-             make fs
-
-             make devenv_ct_init
-             y=`echo $JOB_NAME-$BUILD_NUMBER  | tr '[A-Z]' '[a-z]'`
-             export VSI_IMAGE_NAME=$y
-             echo $VSI_IMAGE_NAME > .image_name
-             make export_docker_image $VSI_IMAGE_NAME
-             make devenv_ct_test PY_TEST_ARGS="src/ops/tests --exitfirst --junit-xml=build/feature-test-results.xml" || (make devenv_ct_clean; docker rmi -f $VSI_IMAGE_NAME)
-             test -e .sandbox_uuid && make devenv_ct_clean
-             docker images | grep $VSI_IMAGE_NAME && docker rmi -f $VSI_IMAGE_NAME
-             sudo chown jenkins.jenkins build/*-test-results.xml
+             make testenv_init
+             # This command extracts the legacy tests from the branch specified on the branches
+             # Also exports the image into docker
+             export TOPOLOGY_TEST_IMAGE=`echo $JOB_NAME-$BUILD_NUMBER  | tr '[A-Z]' '[a-z]'`
+             set +e
+             make testenv_suite_run legacy
+             /usr/local/jenkins/slave_scripts/docker_clean_instances_and_image $TOPOLOGY_TEST_IMAGE
+             set -e
+             sudo chown jenkins.jenkins build/test/legacy/test-results.xml
            else
              echo "Skipping cttest because of one of reasons: 1. Not a genericx86-64 platform; 2. Commit files are all in .md extension"
            fi
 
 - builder:
-    name: feature-cttest-ondemand
+    name: run-legacy-feature-test-ondemand
     builders:
       - shell: |
            #!/bin/bash -x
            set -e
-           rm -rf build/*-test-results.xml
+           rm -rf build/test/legacy/test-results.xml
            if [ {platform} == "genericx86-64" ] || [ {platform} == "p4" ]
            then
-             cd $WORKSPACE
-             rm -rf src/ops
-             echo "===================  Cloning Repositories given as input Feature Tests from ops:$Repositories_List =================== "
-             for i in $(echo $Repositories_List | sed "s/,/ /g")
-             do
-             echo "$i"
-             git clone -b $Feature_BranchName https://git.openswitch.net/openswitch/$i src/ops/$i
-             done
-             make bake cmake-native
-             make devenv_import ops $PWD/src/ops
-             make bake ops
-             make fs
-             make devenv_ct_init
-             y=`echo $JOB_NAME-$BUILD_NUMBER  | tr '[A-Z]' '[a-z]'`
-             export VSI_IMAGE_NAME=$y
-             echo $VSI_IMAGE_NAME > .image_name
-             make export_docker_image $VSI_IMAGE_NAME
-             make devenv_ct_test PY_TEST_ARGS="src/ops/tests --exitfirst --junit-xml=build/feature-test-results.xml" || (make devenv_ct_clean; docker rmi -f $VSI_IMAGE_NAME)
-             test -e .sandbox_uuid && make devenv_ct_clean
-             docker images | grep $VSI_IMAGE_NAME && docker rmi -f $VSI_IMAGE_NAME
-             sudo chown jenkins.jenkins build/*-test-results.xml
+             make testenv_init
+             # This command extracts the legacy tests from the branch specified on the branches
+             # Also exports the image into docker
+             export TOPOLOGY_TEST_IMAGE=`echo $JOB_NAME-$BUILD_NUMBER  | tr '[A-Z]' '[a-z]'`
+             set +e
+             make testenv_run legacy $(echo $Repositories_List | sed "s/,/ /g")
+             /usr/local/jenkins/slave_scripts/docker_clean_instances_and_image $TOPOLOGY_TEST_IMAGE
+             set -e
+             sudo chown jenkins.jenkins build/test/legacy/test-results.xml
            else
              echo "Skipping cttest because of one of reasons: 1. Not a genericx86-64 platform; 2. Commit files are all in .md extension"
-           fi
-
-
-- builder:
-    name: feature-cttest
-    builders:
-      - shell: |
-           #!/bin/bash -x
-           set -e
-           rm -rf build/*-test-results.xml
-           cd src/{module}
-           cat extension.txt
-           #if [ {platform} == "genericx86-64" ] && ([ "$(wc -l < extension.txt | bc)" != "$(grep -c "\.md" extension.txt)" ] || [ ! -s extension.txt ])
-           if [ {platform} == "genericx86-64" ]
-           then
-             cd $WORKSPACE
-             make fs
-             make devenv_ct_init
-             y=`echo $JOB_NAME-$BUILD_NUMBER  | tr '[A-Z]' '[a-z]'`
-             export VSI_IMAGE_NAME=$y
-             #echo $VSI_IMAGE_NAME > .sandbox_uuid
-             echo $VSI_IMAGE_NAME > .image_name
-             make export_docker_image $VSI_IMAGE_NAME
-             make devenv_ct_test PY_TEST_ARGS="src/ops/tests --exitfirst --junit-xml=build/feature-test-results.xml" || (make devenv_ct_clean; docker rmi -f $VSI_IMAGE_NAME)
-             test -e .sandbox_uuid && make devenv_ct_clean
-             docker images | grep $VSI_IMAGE_NAME && docker rmi -f $VSI_IMAGE_NAME
-             sudo chown jenkins.jenkins build/*-test-results.xml
-           else
-             echo "Skipping cttest because of one of reasons: 1. Not a genericx86-64 platform; 2. Commit files are all in .md extension"
-           fi
-
-- builder:
-    name: fttest-for-image
-    builders:
-      - shell: |
-           #!/bin/bash -x
-           set -e
-           if [ {platform} == "genericx86-64" ]
-           then
-             rm -rf src/ops
-             git clone https://git.openswitch.net/openswitch/ops src/ops
-             make bake cmake-native
-             make devenv_import ops $PWD/src/ops
-             make bake ops
-             make fs
-             make devenv_ct_init
-             y=`echo $JOB_NAME-$BUILD_NUMBER  | tr '[A-Z]' '[a-z]'`
-             export VSI_IMAGE_NAME=$y
-             #echo $VSI_IMAGE_NAME > .sandbox_uuid
-             echo $VSI_IMAGE_NAME > .image_name
-             make export_docker_image $VSI_IMAGE_NAME
-             make devenv_ct_test PY_TEST_ARGS="src/ops/tests --exitfirst --junit-xml=build/feature-test-results.xml" || ( make devenv_ct_clean && docker rmi -f $VSI_IMAGE_NAME )
-             test -e .sandbox_uuid && make devenv_ct_clean
-             docker images | grep $VSI_IMAGE_NAME && docker rmi -f $VSI_IMAGE_NAME
-           else
-             echo "Not a genericx86-64 platform, skipping fttest"
            fi
 
 - builder:
@@ -376,13 +291,13 @@
           condition-kind: and
           condition-operand:
           condition-kind: file-exists
-          condition-filename: build/feature-test-results.xml
+          condition-filename: build/test/legacy/test-results.xml
           condition-basedir: workspace
           steps:
             - shell: |
                  VERSION_STRING=$(cat .version_string)
                  mkdir -p genericx86-64_autotestJunitResults
-                 cp build/feature-test-results.xml genericx86-64_autotestJunitResults/
+                 cp build/test/legacy/test-results.xml genericx86-64_autotestJunitResults/
                  echo ${BUILD_URL}/${BUILD_NUMBER}/testReport/ > genericx86-64_autotestJunitResults/Readme.txt
                  cp -rf genericx86-64_autotestJunitResults $TYPE/$VERSION_STRING/
 
@@ -435,26 +350,26 @@
           # If the COV_CONF_FILE does not exist, do not continue, i.e no coverage enabled at the repo.
           if [ -f $COV_CONF_FILE ]
           then
-            make fs
-            make devenv_ct_init
-            # Export the location where the coverage data has to be placed (.gcda and .gcno files).
-            export VSI_COV_DATA_DIR=$PWD/$COV_DATA_DIR
-            DOCKER_IMAGE_NAME=`echo $JOB_NAME-$BUILD_NUMBER  | tr '[A-Z]' '[a-z]'`
-            export VSI_IMAGE_NAME=$DOCKER_IMAGE_NAME
-            make export_docker_image $VSI_IMAGE_NAME
             # Create coverage data baseline
             rm -rf $COV_REPORT_DIR
             mkdir -p $COV_REPORT_DIR
             lcov --zerocounters --directory $COV_DATA_DIR       # Clear all coverage counters before running the tests
             lcov --initial --capture --directory $COV_DATA_DIR --output-file $COV_REPORT_DIR/app_base.info
             # Run the Component and Feature Tests
-            # TODO: Determine if tests can be run in parallel or must definitely be sequential (multiple Docker images may write to the same gcda concurrently)
-            # TODO: It has been configured to NOT exit on first failure. We want all tests to run to get most possible coverage.
-            make devenv_ct_test PY_TEST_ARGS="src/$COV_MODULE/tests --junit-xml=build/component-test-results.xml"
+            make testenv_init
+            # This command extracts the legacy tests from the branch specified on the branches
+            # Also exports the image into docker
+            # Export the location where the coverage data has to be placed (.gcda and .gcno files).
+            export VSI_COV_DATA_DIR=$PWD/$COV_DATA_DIR
+            export TOPOLOGY_TEST_IMAGE=`echo $JOB_NAME-$BUILD_NUMBER  | tr '[A-Z]' '[a-z]'`
+            set +e
+            make testenv_run legacy $COV_MODULE
             # TODO: Enable FT
-            # make devenv_ct_test PY_TEST_ARGS="src/ops --junit-xml=build/feature-test-results.xml"
-            test -e .sandbox_uuid && make devenv_ct_clean
-            docker images | grep $VSI_IMAGE_NAME && docker rmi -f $VSI_IMAGE_NAME
+            # make testenv_rerun feature $COV_MODULE
+            /usr/local/jenkins/slave_scripts/docker_clean_instances_and_image $TOPOLOGY_TEST_IMAGE
+            set -e
+            sudo chown jenkins.jenkins build/test/legacy/test-results.xml
+            #sudo chown jenkins.jenkins build/test/feature/test-results.xml
             # Stop debugging to make report output clearer
             set +x
             # Capture the coverage raw data
@@ -546,66 +461,57 @@
            fi
 
 - builder:
-    name: clear-test-results
+    name: clear-test-logs
     builders:
       - shell: |
            #!/bin/bash -x
-           set +e
            # Clear test execution logs from previous runs
-           ls /tmp/openswitch-test
-           if [ $? != 0 ]
+           if [ ! -d /tmp/openswitch-test ] ;
            then
              echo "No previous test logs from ops-vsi."
            else
-             sudo chown -R jenkins.jenkins /tmp/openswitch-test
              sudo rm -rf /tmp/openswitch-test/
            fi
-           ls /tmp/opsTest-results
-           if [ $? != 0 ]
+           if [ ! -d /tmp/opsTest-results ] ;
            then
              echo "No previous test logs from ops-ft-framework."
            else
-             sudo chown -R jenkins.jenkins /tmp/opsTest-results
              sudo rm -rf /tmp/opsTest-results/
            fi
 
 - builder:
-    name: module-cttest
+    name: module-test
     builders:
       - shell: |
            #!/bin/bash -x
            set -e
-           if git ls-remote https://git.openswitch.net/openswitch/ops | grep -swq "$ZUUL_BRANCH" ; then
-             OPS_BRANCH=$ZUUL_BRANCH
-           else
-             OPS_BRANCH=master
-           fi
-           rm -rf build/*-test-results.xml
-           cd src/{module}
-           cat extension.txt
+           rm -rf build/test/*/test-results.xml
            if [ {platform} == "genericx86-64" ]
            then
-             cd $WORKSPACE
-             rm -rf src/ops
-             echo "===================  Building Feature Tests from ops:$OPS_BUILD_BRANCH =================== "
-             git clone -b $OPS_BRANCH https://git.openswitch.net/openswitch/ops src/ops
-             make fs
-             make devenv_ct_init
-             y=`echo $JOB_NAME-$BUILD_NUMBER  | tr '[A-Z]' '[a-z]'`
-             export VSI_IMAGE_NAME=$y
-             echo $VSI_IMAGE_NAME > .image_name
-             make export_docker_image $VSI_IMAGE_NAME
-             make devenv_ct_test PY_TEST_ARGS="src/{module}/tests --exitfirst --junit-xml=build/module-test-results.xml" || (make devenv_ct_clean; docker rmi -f $VSI_IMAGE_NAME; exit 1)
-             make devenv_ct_test PY_TEST_ARGS="src/ops/tests --exitfirst --junit-xml=build/feature-test-results.xml" || (make devenv_ct_clean; docker rmi -f $VSI_IMAGE_NAME; exit 1)
-             test -e .sandbox_uuid && make devenv_ct_clean
-             docker images | grep $VSI_IMAGE_NAME && docker rmi -f $VSI_IMAGE_NAME
-             sudo chown jenkins.jenkins build/*-test-results.xml
+             make testenv_init
+             # This command extracts the legacy tests from the branch specified on the branches
+             # Also exports the image into docker
+             export TOPOLOGY_TEST_IMAGE=`echo $JOB_NAME-$BUILD_NUMBER  | tr '[A-Z]' '[a-z]'`
+             set +e
+             # Run legacy feature test
+             make testenv_suite_run legacy
+             # Run legacy component test, this will discart the test results from the feature, and leave only the component legacy results
+             if [ -d src/{module}/test ] && [ "{module}" != "ops"] ; then
+               make testenv_rerun legacy {module}
+             fi
+             # Run new component test
+             if [ -d src/{module}/ops-test/component ] ; then
+               make testenv_rerun component {module}
+             fi
+             /usr/local/jenkins/slave_scripts/docker_clean_instances_and_image $TOPOLOGY_TEST_IMAGE
+             set -e
+             sudo chown jenkins.jenkins build/test/*/test-results.xml
            else
              echo "Skipping cttest because it is not a genericx86-64 platform"
            fi
 
 - builder:
-    name: module-cttest-codecoverage
+    name: module-test-codecoverage
     builders:
       - shell: |
            #!/bin/bash -x
@@ -614,28 +520,9 @@
            COV_MINIMUM=80                                        # Minimum default of coverage.
            COV_REPORT_DIR="coverage"                             # Location where the coverage report data will be placed
            COV_DATA_DIR="src/{module}/"                       # Repo directory where coverage data will be stored (gcda && gcno)
-
-           if git ls-remote https://git.openswitch.net/openswitch/ops | grep -swq "$ZUUL_BRANCH" ; then
-             OPS_BRANCH=$ZUUL_BRANCH
-           else
-             OPS_BRANCH=master
-           fi
-           rm -rf build/*-test-results.xml
-           cd src/{module}
-           cat extension.txt
+           rm -rf build/test/*/test-results.xml
            if [ {platform} == "genericx86-64" ]
            then
-             cd $WORKSPACE
-             rm -rf src/ops
-             echo "===================  Building Feature Tests from ops:$OPS_BUILD_BRANCH =================== "
-             git clone -b $OPS_BRANCH https://git.openswitch.net/openswitch/ops src/ops
-             make fs
-             make devenv_ct_init
-             y=`echo $JOB_NAME-$BUILD_NUMBER  | tr '[A-Z]' '[a-z]'`
-             export VSI_IMAGE_NAME=$y
-             echo $VSI_IMAGE_NAME > .image_name
-             make export_docker_image $VSI_IMAGE_NAME
-
              if [ -f $COV_CONF_FILE ]
              then
                 export VSI_COV_DATA_DIR=$PWD/$COV_DATA_DIR
@@ -645,11 +532,24 @@
                 lcov --initial --capture --directory $COV_DATA_DIR --output-file $COV_REPORT_DIR/app_base.info
              fi
 
-             make devenv_ct_test PY_TEST_ARGS="src/{module}/tests --exitfirst --junit-xml=build/module-test-results.xml" || (make devenv_ct_clean; docker rmi -f $VSI_IMAGE_NAME; exit 1)
-             make devenv_ct_test PY_TEST_ARGS="src/ops/tests --exitfirst --junit-xml=build/feature-test-results.xml" || (make devenv_ct_clean; docker rmi -f $VSI_IMAGE_NAME; exit 1)
-             test -e .sandbox_uuid && make devenv_ct_clean
-             docker images | grep $VSI_IMAGE_NAME && docker rmi -f $VSI_IMAGE_NAME
-             sudo chown jenkins.jenkins build/*-test-results.xml
+             make testenv_init
+             # This command extracts the legacy tests from the branch specified on the branches
+             # Also exports the image into docker
+             export TOPOLOGY_TEST_IMAGE=`echo $JOB_NAME-$BUILD_NUMBER  | tr '[A-Z]' '[a-z]'`
+             set +e
+             # Run legacy feature test
+             make testenv_suite_run legacy
+             # Run legacy component test, this will discart the test results from the feature, and leave only the component legacy results
+             if [ -d src/{module}/test ] ; then
+               make testenv_rerun legacy {module}
+             fi
+             # Run new component test
+             if [ -d src/{module}/ops-test/component ] ; then
+               make testenv_rerun component {module}
+             fi
+             /usr/local/jenkins/slave_scripts/docker_clean_instances_and_image $TOPOLOGY_TEST_IMAGE
+             set -e
+             sudo chown jenkins.jenkins build/test/*/test-results.xml
 
              if [ -f $COV_CONF_FILE ]
              then
@@ -717,48 +617,8 @@
              fi
 
            else
-             echo "Skipping cttest"
+             echo "Skipping cttest codecoverage"
            fi
-
-- builder:
-    name: topology_test
-    builders:
-      - shell: |
-           #!/bin/bash -x
-           set -e
-           if [ {platform} == "genericx86-64" ]
-           then
-             echo "===================  Building Topology $test Tests from ops:$module =================== "
-             cd $WORKSPACE
-             make testenv_init
-             make testenv_run {test} {module}
-           else
-             echo "Skipping topology test component because of one of reasons: 1. Not a genericx86-64 platform; 2. Commit files are all in .md extension"
-           fi
-
-- builder:
-    name: topology_test_rerun
-    builders:
-      - shell: |
-           #!/bin/bash -x
-           set -e
-           if [ {platform} == "genericx86-64" ]
-           then
-             echo "===================  Building Topology $test Tests from ops:$module =================== "
-             cd $WORKSPACE
-             make testenv_init
-             make testenv_rerun {test} {module}
-           else
-             echo "Skipping topology test component because of one of reasons: 1. Not a genericx86-64 platform; 2. Commit files are all in .md extension"
-           fi
-
-- builder:
-    name: jekyll-build
-    builders:
-      - shell: |
-           #!/bin/bash -x
-           set -e
-           jekyll build
 
 #- builder:
 #    name: gulp-dist
@@ -954,22 +814,19 @@
           rename 's/onie-installer/openswitch-onie-installer/' *
 
 - builder:
-    name: cp-opsTest-results
-    builders:
-      - shell: |
-          rm -rf opsTest-results
-          cp -rf /tmp/opsTest-results/. opsTest-results || true
-
-- builder:
-    name: cp-test-results
+    name: cp-test-logs
     builders:
       - shell: |
           # Copy ops-vsi test results
           rm -rf openswitch-test
-          cp -rf /tmp/openswitch-test/. openswitch-test || true
+          if [ -d /tmp/openswitch-test ] ; then
+            cp -rf /tmp/openswitch-test/. openswitch-test
+          fi
           # Copy ops-ft-framework test results
           rm -rf opsTest-results
-          cp -rf /tmp/opsTest-results/. opsTest-results || true
+          if [ -d /tmp/opsTest-results ] ; then
+            cp -rf /tmp/opsTest-results/. opsTest-results
+          fi
 
 - builder:
     name: scp-artifacts
@@ -990,13 +847,13 @@
     builders:
       - conditional-step:
           condition-kind: file-exists
-          condition-filename: build/feature-test-results.xml
+          condition-filename: build/test/legacy/test-results.xml
           on-evaluation-failure: dont-run
           steps:
              - shell: |
                  VERSION_STRING=$(cat .version_string)
                  mkdir -p genericx86-64_autotestJunitResults
-                 cp build/feature-test-results.xml genericx86-64_autotestJunitResults/
+                 cp build/test/legacy/test-results.xml genericx86-64_autotestJunitResults/
                  echo ${BUILD_URL}/${BUILD_NUMBER}/testReport/ > genericx86-64_autotestJunitResults/Readme.txt
                  scp -r genericx86-64_autotestJunitResults static.openswitch.net:/srv/static/archive/artifacts/$TYPE/$VERSION_STRING/.
 
@@ -1841,22 +1698,15 @@
               copy-after-failure: false
 
 - publisher:
-    name: post-docker-clean
+    name: archive-syslog
     publishers:
       # Publish logs from tests if it is present
       - postbuildscript:
           builders:
             - shell: |
-                 export VSI_IMAGE_NAME=`cat .image_name`
-                 export SYSLOG="${VSI_IMAGE_NAME}_syslog.txt"
+                 export IMAGE_NAME=`echo $JOB_NAME-$BUILD_NUMBER  | tr '[A-Z]' '[a-z]'`
+                 export SYSLOG="${IMAGE_NAME}_syslog.txt"
                  sudo tail -n 2000 /var/log/syslog > build/$SYSLOG
-                 sudo docker ps | grep $VSI_IMAGE_NAME
-                 if [ $? = "0" ]; then
-                   sudo docker ps | grep $VSI_IMAGE_NAME | cut -d' ' -f1 | xargs sudo docker rm -vf
-                 fi
-                 test -e .sandbox_uuid && make devenv_ct_clean
-                 docker rmi -f $VSI_IMAGE_NAME 2>/dev/null
-                 #docker images | grep $VSI_IMAGE_NAME && docker rmi -f $VSI_IMAGE_NAME
           script-only-if-succeeded: False
           script-only-if-failed: True
       - conditional-publisher:
@@ -1885,19 +1735,7 @@
          fail-build: false
 
 - publisher:
-    name: publish-topologyTest-results
-    publishers:
-      - conditional-publisher:
-          - condition-kind: shell
-            condition-command: test -f builds/tests/{test}/test-results.xml
-            on-evaluation-failure: dont-run
-            action:
-                - archive:
-                    artifacts: 'builds/tests/{test}/test-results.xml'
-                    allow-empty: 'true'
-
-- publisher:
-    name: publish-opsTest-results
+    name: archive-opsTest-logs
     publishers:
       - conditional-publisher:
           - condition-kind: shell
@@ -1909,7 +1747,7 @@
                     allow-empty: 'true'
 
 - publisher:
-    name: publish-vsiTest-results
+    name: archive-vsiTest-logs
     publishers:
       - conditional-publisher:
           - condition-kind: shell
@@ -1921,7 +1759,7 @@
                     allow-empty: 'true'
 
 - publisher:
-    name: publish-test-results-on-failure
+    name: archive-test-logs-on-failure
     publishers:
       - conditional-publisher:
           - condition-kind: current-status
@@ -1936,15 +1774,15 @@
                     allow-empty: 'true'
 
 - publisher:
-    name: conditional-junit
+    name: conditional-publish-test-results
     publishers:
       - conditional-publisher:
           - condition-kind: shell
-            condition-command: ls build/*test-results.xml
+            condition-command: ls build/test/*/test-results.xml
             on-evaluation-failure: dont-run
             action:
                 - junit:
-                    results: 'build/*test*.xml'
+                    results: 'build/test/**/*test*.xml'
 - publisher:
     name: conditional-htmlreports
     publishers:

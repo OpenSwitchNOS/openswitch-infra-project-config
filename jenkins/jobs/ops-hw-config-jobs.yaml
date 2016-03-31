@@ -30,7 +30,7 @@
         - lcov-coverage-run:
             module: 'ops-hw-config'
     publishers:
-        - conditional-junit
+        - conditional-publish-test-results
         - conditional-htmlreports
 - job-group:
     name: 'ops-hw-config-jobs'

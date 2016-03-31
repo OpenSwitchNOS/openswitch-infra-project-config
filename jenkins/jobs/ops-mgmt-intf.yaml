@@ -48,20 +48,20 @@
             module: 'ops-mgmt-intf'
             platform: 'genericx86-64'
         - check-docker-state
-        - clear-test-results
-        - module-cttest:
+        - clear-test-logs
+        - module-test:
             module: 'ops-mgmt-intf'
             platform: 'genericx86-64'
-        - cp-test-results
+        - cp-test-logs
         - lcov-compile:
             module: 'ops-mgmt-intf'
         - lcov-coverage-run:
             module: 'ops-mgmt-intf'
     publishers:
-        - conditional-junit
+        - conditional-publish-test-results
         - conditional-htmlreports
-        - post-docker-clean
-        - publish-test-results-on-failure
+        - archive-syslog
+        - archive-test-logs-on-failure
         - post-ws-clean
 
 
