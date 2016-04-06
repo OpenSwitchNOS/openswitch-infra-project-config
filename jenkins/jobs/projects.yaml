@@ -26,6 +26,7 @@
         - as5712
         - as6712
         - appliance
+        - sai-stub
       jobs:
         - 'ops-default-builds'
 
