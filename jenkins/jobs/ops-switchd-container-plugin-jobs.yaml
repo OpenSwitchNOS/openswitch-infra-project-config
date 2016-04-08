@@ -51,7 +51,6 @@
             module: 'ops-switchd-container-plugin'
 
     publishers:
-        - conditional-junit
         - conditional-htmlreports
         - archive-syslog
         - archive-test-logs-on-failure
