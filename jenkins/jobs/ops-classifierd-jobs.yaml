@@ -16,7 +16,7 @@
 
 - job-template:
     name: 'ops-classifierd-gate-{platform}'
-    node: openswitch
+    node: vsi
 
     wrappers:
         - build-timeout:
@@ -25,6 +25,9 @@
     builders:
         - revoke-sudo
         - module-build-branch:
+            module: 'ops-classifierd'
+            platform: '{platform}'
+        - module-test:
             module: 'ops-classifierd'
             platform: '{platform}'
         - lcov-compile:
