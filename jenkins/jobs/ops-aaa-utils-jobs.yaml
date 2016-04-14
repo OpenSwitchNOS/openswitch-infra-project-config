@@ -43,6 +43,7 @@
             module: 'ops-aaa-utils'
             platform: 'genericx86-64'
         - check-docker-state
+        - docker-cleanup
         - clear-test-logs
         - module-test:
             module: 'ops-aaa-utils'

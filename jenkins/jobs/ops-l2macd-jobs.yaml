@@ -47,6 +47,8 @@
         - module-build-branch:
             module: 'ops-l2macd'
             platform: 'genericx86-64'
+        - check-docker-state
+        - docker-cleanup
         - module-cttest:
             module: 'ops-l2macd'
             platform: 'genericx86-64'

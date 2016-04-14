@@ -41,6 +41,8 @@
         - module-build-branch:
             module: 'ops-cfgd'
             platform: 'genericx86-64'
+        - check-docker-state
+        - docker-cleanup
         - module-test:
             module: 'ops-cfgd'
             platform: 'genericx86-64'

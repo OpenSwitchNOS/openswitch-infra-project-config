@@ -80,6 +80,7 @@
         - ops-build:
             platform: 'genericx86-64'
         - check-docker-state
+        - docker-cleanup
         - clear-test-logs
         - feature-cttest-for-ops-build:
             platform: 'genericx86-64'
@@ -121,6 +122,7 @@
         - create-build-artifacts
         - scp-artifacts
         - check-docker-state
+        - docker-cleanup
         - clear-test-logs
         - fttest-for-image:
             platform: '{platform}'
@@ -210,6 +212,7 @@
         - create-build-artifacts
         - scp-artifacts
         - check-docker-state
+        - docker-cleanup
         - clear-test-logs
         - fttest-for-image:
             platform: 'p4'
@@ -262,6 +265,7 @@
         - create-build-artifacts
         - scp-artifacts
         - check-docker-state
+        - docker-cleanup
         - clear-test-logs
         - fttest-for-image:
             platform: 'genericx86-64'
@@ -358,6 +362,7 @@
         - create-build-artifacts
         - scp-artifacts
         - check-docker-state
+        - docker-cleanup
         - clear-test-logs
         - fttest-for-image:
             platform: 'genericx86-64'

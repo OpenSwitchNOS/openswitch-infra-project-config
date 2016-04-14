@@ -45,6 +45,7 @@
             module: 'ops-broadview'
             platform: 'genericx86-64'
         - check-docker-state
+        - docker-cleanup
         - clear-test-logs
         - module-test:
             module: 'ops-broadview'

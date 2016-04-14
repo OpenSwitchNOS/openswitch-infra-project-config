@@ -48,6 +48,7 @@
             module: 'ops-snmpd'
             platform: 'genericx86-64'
         - check-docker-state
+        - docker-cleanup
         - clear-test-logs
         - module-cttest:
             module: 'ops-snmpd'
