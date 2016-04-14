@@ -26,13 +26,8 @@
         - module-build-branch:
             module: 'ops-supportability'
             platform: 'as5712'
-        - module-cttest:
-            module: 'ops-supportability'
-            platform: 'as5712'
 
     publishers:
-        - conditional-junit
-        - archive-syslog
         - post-ws-clean
 
 - job:
@@ -59,7 +54,7 @@
             module: 'ops-supportability'
 
     publishers:
-        - conditional-junit
+        - conditional-gather-test-results
         - conditional-htmlreports
         - archive-syslog
         - archive-test-logs-on-failure
