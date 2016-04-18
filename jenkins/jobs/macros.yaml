@@ -778,7 +778,7 @@
       - shell: |
            #!/bin/bash -x
            set +e
-           MOD_FRAMEWORK="^ops-tests\/test_.*?.py$"
+           MOD_FRAMEWORK="^ops-tests\/(.*?\/)?test_.*?.py$"
            PATTERN="^(.*?\/)?tests\/(.*?\/)?test_.*?.py$"
            TEST_FAILURE=0
            EXIT_FLAG=0
