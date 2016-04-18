@@ -778,7 +778,7 @@
       - shell: |
            #!/bin/bash -x
            set +e
-           MOD_FRAMEWORK="^ops-tests/.*\.py$"
+           MOD_FRAMEWORK="^ops-tests\/(.*?\/)?test_.*?.py$"
            PATTERN="^(.*?\/)?tests\/(.*?\/)?test_.*?.py$"
            TEST_FAILURE=0
            EXIT_FLAG=0
@@ -791,7 +791,7 @@
            fi
            rm -rf build/test/*/test-results.xml
            cd src/{module}
-           arr_files=($(git diff-tree --no-commit-id --name-only -r $ZUUL_COMMIT))
+           # arr_files=($(git diff-tree --no-commit-id --name-only -r $ZUUL_COMMIT))
            cat extension.txt
            if [ {platform} == "genericx86-64" ]
            then
@@ -801,7 +801,7 @@
              export TOPOLOGY_TEST_IMAGE=$(echo $JOB_NAME-$BUILD_NUMBER  | tr '[A-Z]' '[a-z]')
 
              SECOND_RUN_COMMAND=testenv_run
-             for tst in "$arr_files[@]"
+             for tst in $(git diff-tree --no-commit-id --name-only -r $ZUUL_COMMIT)
              do
                echo $tst
                TEST_FAILURE=0
@@ -822,7 +822,7 @@
                  continue
                fi
 
-               make $SECOND_RUN_COMMAND $TEST_TYPE {module} TESTENV_STRESS=yes TESTENV_ITERATIONS=5 TESTENV_EXTRA_PARAMETERS="-k $tst"
+               make $SECOND_RUN_COMMAND $TEST_TYPE {module} TESTENV_ITERATIONS=5 TESTENV_EXTRA_PARAMETERS="-k $tst"
                SECOND_RUN_COMMAND=testenv_rerun
                if [ $? != 0 ]
                then
@@ -841,24 +841,24 @@
                docker rmi -f $VSI_IMAGE_NAME
                exit 3
              else
-
-             set -e
-             # If we have modular component tests, we run them
-             if [ -d src/{module}/ops-tests/component ] ; then
-               make $SECOND_RUN_COMMAND component {module}
-               SECOND_RUN_COMMAND=testenv_rerun
+               set -e
+               # If we have modular component tests, we run them
+               if [ -d src/{module}/ops-tests/component ] ; then
+                 make $SECOND_RUN_COMMAND component {module}
+                 SECOND_RUN_COMMAND=testenv_rerun
+               fi
+               # If this module still has legacy component test, we run them too, otherwise only the legacy feature
+               if [ -d src/{module}/tests ] ; then
+                  TESTS_TO_RUN="{module} ops"
+               else
+                  TESTS_TO_RUN="ops"
+               fi
+               # build the fs, export into docker, and download the repos and run the tests
+               make $SECOND_RUN_COMMAND legacy $TESTS_TO_RUN
+               test -e .sandbox_uuid && make devenv_ct_clean
+               /usr/local/jenkins/slave_scripts/docker_clean_instances_and_image.sh $TOPOLOGY_TEST_IMAGE
+               sudo chown jenkins.jenkins build/test/*/test-results.xml
              fi
-             # If this module still has legacy component test, we run them too, otherwise only the legacy feature
-             if [ -d src/{module}/tests ] ; then
-                TESTS_TO_RUN="{module} ops"
-             else
-                TESTS_TO_RUN="ops"
-             fi
-             # build the fs, export into docker, and download the repos and run the tests
-             make $SECOND_RUN_COMMAND legacy $TESTS_TO_RUN
-             test -e .sandbox_uuid && make devenv_ct_clean
-             /usr/local/jenkins/slave_scripts/docker_clean_instances_and_image.sh $TOPOLOGY_TEST_IMAGE
-             sudo chown jenkins.jenkins build/test/*/test-results.xml
            else
              echo "Skipping tests because it is not a genericx86-64 platform"
            fi
