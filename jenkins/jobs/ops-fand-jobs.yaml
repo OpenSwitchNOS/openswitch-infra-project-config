@@ -27,6 +27,8 @@
         - module-build-branch:
             module: 'ops-fand'
             platform: '{platform}'
+        - lcov-coverage-run:
+            module: 'ops-fand'
 
     publishers:
         - conditional-junit

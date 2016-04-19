@@ -47,7 +47,8 @@
 #            module: 'ops-sysmond'
 #            platform: 'genericx86-64'
 #        - capture-test-logs
-#
+#        - lcov-coverage-run:
+#            module: 'ops-sysmond'
 #    publishers:
 #        - conditional-gather-test-results
 #        - conditional-htmlreports

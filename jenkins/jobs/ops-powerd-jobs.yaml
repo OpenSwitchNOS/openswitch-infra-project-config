@@ -30,6 +30,8 @@
         - module-test:
             module: 'ops-powerd'
             platform: '{platform}'
+        - lcov-coverage-run:
+            module: 'ops-powerd'
 
     publishers:
         - conditional-gather-test-results

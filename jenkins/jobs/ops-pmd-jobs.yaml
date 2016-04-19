@@ -43,6 +43,8 @@
         - module-test:
             module: 'ops-pmd'
             platform: 'genericx86-64'
+        - lcov-coverage-run:
+            module: 'ops-pmd'
 
     publishers:
         - conditional-htmlreports

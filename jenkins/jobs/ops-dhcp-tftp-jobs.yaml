@@ -45,6 +45,8 @@
             module: 'ops-dhcp-tftp'
             platform: 'genericx86-64'
         - capture-test-logs
+        - lcov-coverage-run:
+            module: 'ops-dhcp-tftp'
 
     publishers:
         - conditional-gather-test-results

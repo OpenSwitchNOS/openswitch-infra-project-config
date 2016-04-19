@@ -27,6 +27,8 @@
         - module-build-branch:
             module: 'ops-utils'
             platform: '{platform}'
+        - lcov-coverage-run:
+            module: 'ops-utils'
 
     publishers:
         - conditional-htmlreports

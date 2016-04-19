@@ -27,6 +27,8 @@
         - module-build-branch:
             module: 'ops-ledd'
             platform: '{platform}'
+        - lcov-coverage-run:
+            module: 'ops-ledd'
 
     publishers:
         - conditional-junit
