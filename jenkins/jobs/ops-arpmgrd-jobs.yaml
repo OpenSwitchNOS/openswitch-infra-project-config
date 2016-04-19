@@ -27,7 +27,6 @@
         - module-build-branch:
             module: 'ops-arpmgrd'
             platform: 'as5712'
-
     publishers:
         - post-ws-clean
 
@@ -49,6 +48,8 @@
             module: 'ops-arpmgrd'
             platform: 'genericx86-64'
         - capture-test-logs
+        - lcov-coverage-run:
+            module: 'ops-arpmgrd'
 
     publishers:
         - conditional-htmlreports

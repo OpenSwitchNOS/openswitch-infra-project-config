@@ -52,6 +52,9 @@
         - module-test:
             module: 'ops-mgmt-intf'
             platform: 'genericx86-64'
+        - capture-test-logs
+        - lcov-coverage-run:
+            module: 'ops-mgmt-intf'
 
     publishers:
         - conditional-gather-test-results
