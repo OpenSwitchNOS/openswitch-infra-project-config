@@ -653,7 +653,7 @@
                SECOND_RUN_COMMAND=testenv_rerun
              fi
              # If this module still has legacy component test, we run them too
-             if [ -d src/{module}/tests ] ; then
+             if [ -d src/{module}/tests ] || [ -d src/{module}/ops/tests ] ; then
                make $SECOND_RUN_COMMAND legacy {module}
                SECOND_RUN_COMMAND=testenv_rerun
              fi
