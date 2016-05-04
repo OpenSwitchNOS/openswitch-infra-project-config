@@ -620,15 +620,8 @@
                SECOND_RUN_COMMAND=testenv_rerun
              fi
 
-             # If ops has modular feature test, we run them
-             if [ -d src/ops/ops-tests/feature ] ; then
-               make $SECOND_RUN_COMMAND feature ops
-               SECOND_RUN_COMMAND=testenv_rerun
-             fi
-             # If ops has legacy feature test, we run them
-             if [ -d src/ops/tests ] ; then
-               make $SECOND_RUN_COMMAND legacy ops
-             fi
+             # Run legacy FTs in ops
+             make $SECOND_RUN_COMMAND legacy ops
 
              # build the fs, export into docker, and download the repos and run the tests
              test -e .sandbox_uuid && make devenv_ct_clean
