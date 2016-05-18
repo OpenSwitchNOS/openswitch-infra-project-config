@@ -75,7 +75,7 @@
               echo ""
           fi
           make
-          
+
 - builder:
     name: commit-message-validation
     builders:
@@ -116,7 +116,7 @@
            else
             echo "Commit Message Validation is Skipped since it is not a release branch"
            fi
-           
+
 - builder:
     name: ops-build-tag
     builders:
@@ -285,6 +285,7 @@
             make devenv_import {module} $PWD/src/{module}
             make bake {module}
            fi
+
 - builder:
     name: feature-cttest-for-ops-build
     builders:
@@ -317,6 +318,30 @@
            else
              echo "Skipping cttest because of one of reasons: 1. Not a genericx86-64 platform; 2. Commit files are all in .md extension"
            fi
+
+# This builder is for Topology Modular Test Framework
+- builder:
+    name: topology-test
+    builders:
+      - shell: |
+           #!/bin/bash -x
+           set -e
+           rm -rf ops-topology-common
+           if git ls-remote https://git.openswitch.net/openswitch/ops-topology-common | grep -swq "$ZUUL_BRANCH" ; then
+             OPS_BRANCH=$ZUUL_BRANCH
+           else
+             OPS_BRANCH=master
+           fi
+           git clone -b $OPS_BRANCH https://git.openswitch.net/openswitch/ops-topology-common
+           cd ops-topology-common
+           # tox runs all tests and generates results in .tox/coverage/tmp/tests.xml
+           tox
+           # This builder does not clone ops-build therefore the build directory does not exist
+           mkdir build
+           # By default, topology libraries generate test results under .tox/
+           # but the OPS Publishers look for tests under build. I am re-using those publishers.
+           cp .tox/coverage/tmp/tests.xml build/topology-test-results.xml
+           sudo chown jenkins.jenkins build/topology-test-results.xml
 
 - builder:
     name: feature-cttest
