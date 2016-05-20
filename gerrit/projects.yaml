@@ -3,6 +3,8 @@
 - project: infra/jeepyb
   description: Gerrit Project Builder Tools
   upstream: https://git.openstack.org/openstack-infra/jeepyb
+  options:
+    - track-upstream
 
 - project: infra/system-config
   description: Infrastructure system configuration
