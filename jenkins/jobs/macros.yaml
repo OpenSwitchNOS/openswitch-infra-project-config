@@ -269,8 +269,11 @@
              git clone -b $OPS_BRANCH https://git.openswitch.net/openswitch/ops src/ops
              # Usually devenv_import initialized the devenv, but here we use a trick instead
              touch .devenv
-             make devenv_ct_init
-             make devenv_ct_test PY_TEST_ARGS="src/ops/tests --exitfirst --junit-xml=build/feature-test-results.xml" || (make devenv_ct_clean; docker rmi -f $VSI_IMAGE_NAME)
+
+             make testenv_init
+             make testenv_run feature ops
+             make testenv_rerun legacy ops
+
              test -e .sandbox_uuid && make devenv_ct_clean
              docker images | grep $VSI_IMAGE_NAME && docker rmi -f $VSI_IMAGE_NAME
              sudo chown jenkins.jenkins build/*-test-results.xml
