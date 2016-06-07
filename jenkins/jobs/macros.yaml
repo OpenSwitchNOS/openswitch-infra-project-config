@@ -317,7 +317,7 @@
            set +x
            echo "===================  Building ops-build on $OPS_BUILD_BRANCH =================== "
            rm -fr .[^.]* *
-           git clone -b $OPS_BUILD_BRANCH https://git.openswitch.net/openswitch/ops-build .
+           git clone https://git.openswitch.net/openswitch/ops-build .
            # Setup the shared state local cache
            export SSTATE_DIR=/mnt/jenkins/workspace/sstate-cache
            mkdir -p /mnt/jenkins/workspace/sstate-cache
