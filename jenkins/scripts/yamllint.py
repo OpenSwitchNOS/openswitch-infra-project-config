@@ -6,7 +6,6 @@ import string
 <<<<<<< HEAD
 from yamllint.linter import Lintproblem
 =======
-from yamllint.linter import LintProblem
 
 >>>>>>> 7e82a31... trailing-space
 if len(sys.argv) < 2:
