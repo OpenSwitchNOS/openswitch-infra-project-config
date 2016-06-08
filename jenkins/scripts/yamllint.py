@@ -3,12 +3,18 @@
 import sys
 import yaml
 import string
+<<<<<<< HEAD
 from yamllint.linter import Lintproblem
+=======
+from yamllint.linter import LintProblem
+
+>>>>>>> 7e82a31... trailing-space
 if len(sys.argv) < 2:
     print 'Missing file to lint'
     sys.exit(1)
 ID = 'trailing-spaces'
 TYPE = 'line'
+<<<<<<< HEAD
 
 
 def check(conf, line):
@@ -16,6 +22,12 @@ def check(conf, line):
         return
 
     pos = line.end
+=======
+def check(conf, line):
+    if line.end == 0:
+        return
+pos = line.end
+>>>>>>> 7e82a31... trailing-space
     while line.buffer[pos - 1] in string.whitespace and pos > line.start:
         pos -= 1
 
