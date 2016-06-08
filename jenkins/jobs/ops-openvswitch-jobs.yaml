@@ -43,7 +43,7 @@
             platform: 'genericx86-64'
         - check-docker-state
         - clear-test-logs
-        - module-test:
+        - module-test-extended:
             module: 'ops-openvswitch'
             platform: 'genericx86-64'
         - shell: |

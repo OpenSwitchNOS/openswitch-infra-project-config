@@ -44,7 +44,7 @@
             module: 'ops-cfgd'
             platform: 'genericx86-64'
         - check-docker-state
-        - module-test:
+        - module-test-extended:
             module: 'ops-cfgd'
             platform: 'genericx86-64'
     publishers:
