@@ -12,6 +12,7 @@
         - revoke-sudo
         - gerrit-git-prep
         - yaml-verifyall
+        - jjb-check
 
 - job:
     name: 'infra-project-config-gate'

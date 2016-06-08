@@ -149,6 +149,13 @@
            fi
 
 - builder:
+    name: jjb-check
+    builders:
+      - shell: |
+          #!/bin/bash -x
+          jenkins-jobs test jenkins/jobs/
+
+- builder:
     name: ops-build-tag
     builders:
       - shell: |
