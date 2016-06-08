@@ -12,6 +12,7 @@ from yamllint.linter import LintProblem
 if len(sys.argv) < 2:
     print 'Missing file to lint'
     sys.exit(1)
+
 ID = 'trailing-spaces'
 TYPE = 'line'
 <<<<<<< HEAD
