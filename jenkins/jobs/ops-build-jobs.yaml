@@ -134,6 +134,7 @@
         - archive-test-logs
         - mail-on-fail:
              email-by-space-when-fail: "openswitch-infra@groups.int.hpe.com"
+        - post-ws-clean
 
 - job:
     name: 'ops-release-as5712'
