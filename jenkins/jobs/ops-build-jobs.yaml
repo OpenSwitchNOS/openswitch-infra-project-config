@@ -87,7 +87,7 @@
             platform: 'genericx86-64'
         - check-docker-state
         - clear-test-logs
-        - module-test-ops-ft-only:
+        - ops-build-gate-test:
             platform: 'genericx86-64'
 
     publishers:
@@ -128,7 +128,7 @@
         - scp-artifacts
         - check-docker-state
         - clear-test-logs
-        - module-test-ops-ft-only:
+        - ops-build-periodic-test:
             platform: '{platform}'
         - scp-artifacts-junit
         - capture-test-logs
@@ -174,7 +174,7 @@
         - scp-artifacts
         - check-docker-state
         - clear-test-logs
-        - module-test-ops-ft-only:
+        - ops-build-periodic-test:
             platform: '{platform}'
         - scp-artifacts-junit
         - capture-test-logs
@@ -219,7 +219,7 @@
         - scp-artifacts
         - check-docker-state
         - clear-test-logs
-        - module-test-ops-ft-only:
+        - ops-build-periodic-test:
             platform: 'p4'
         - scp-artifacts-junit
         - capture-test-logs
@@ -264,7 +264,7 @@
         - scp-artifacts
         - check-docker-state
         - clear-test-logs
-        - module-test-ops-ft-only:
+        - ops-build-periodic-test:
             platform: '{platform}'
         - scp-artifacts-junit
         - capture-test-logs
@@ -309,7 +309,7 @@
         - scp-artifacts
         - check-docker-state
         - clear-test-logs
-        - module-test-ops-ft-only:
+        - ops-build-periodic-test:
             platform: '{platform}'
         - scp-artifacts-junit
         - capture-test-logs
@@ -355,7 +355,7 @@
         - scp-artifacts
         - check-docker-state
         - clear-test-logs
-        - module-test-ops-ft-only:
+        - ops-build-periodic-test:
             platform: 'as5712'
         - scp-artifacts-junit
         - capture-test-logs

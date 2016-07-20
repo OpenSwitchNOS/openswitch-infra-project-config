@@ -45,7 +45,8 @@
             platform: 'genericx86-64'
         - check-docker-state
         - clear-test-logs
-        - module-test-ops-ft-only:
+        - module-test:
+            module: 'ops'
             platform: 'genericx86-64'
 
     publishers:
