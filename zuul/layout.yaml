@@ -265,6 +265,7 @@ project-templates:
       - '{module}-check-{platform}'
     gate:
       - '{module}-gate-{platform}'
+      - 'md-gate'
 
 # Jobs definitions are not required, but help us filter unrequired check jobs
 # We still run the jobs during gate
@@ -276,7 +277,7 @@ jobs:
 
   - name: ^ops-.*gate.*$
     skip-if:
-      - project: ^openswitch/ops$
+      - project: ^openswitch/.*$
         all-files-match-any:
           - ^.*\.md
 
