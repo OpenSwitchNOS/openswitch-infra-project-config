@@ -1,7 +1,9 @@
 #!/bin/bash
 #Include the path from where the files are. Find files with .bb extensions and remove the extension. Searching for SRCREV value in each repository. Put the repository name and hash value together.
-a=$1
-git clone https://git.openswitch.net/openswitch/ops-build .
+if ! [ -d "ops-build" ]; then
+    echo "Cloning ops-build repo"
+    git clone https://git.openswitch.net/openswitch/ops-build
+fi
 pwd='/mnt/jenkins/workspace/tagging-branch/ops-build/yocto/openswitch/meta-distro-openswitch/recipes-ops'
 auto_rev="\${AUTOREV}"
 declare -A keys
@@ -37,13 +39,16 @@ if ! [ -d "$pwd/clones/$j" ]; then
 fi
 #Changing the path to the directory and start tagging according to the SHA value
 cd $pwd/clones/$j
-if [ `git rev-parse --verify $a`]; then
- git checkout $a
- git branch
- git pull --rebase origin
- git pull --rebase origin
- git reset --hard ${keys[$j]}
-# git tag -a v1 -m "Creating a tag on the SHA Value"
-# git push origin --tags
+if [ `git rev-parse --verify "remotes/origin/$1"`]; then
+   git checkout $1
+   git branch
+   git pull --rebase origin
+   git pull --rebase origin
+   git reset --hard ${keys[$j]}
+   echo Creating tag $2 on repo $j
+   git tag -a $2 -m "Creating a tag on the SHA Value"
+   #git push origin --tags
+ else
+   echo Branch $1 doesnt't exist on repo $j
 fi
 done

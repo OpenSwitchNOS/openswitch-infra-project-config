@@ -7,6 +7,10 @@
             name: branch_name
             default: rel/dill
             description: "Specifying a branch name as the tag target, e.g. rel/dill"
+        - string:
+            name: tag_name
+            default: 1.0.0
+            description: "Specifying the new tag name"
 
     wrappers:
         - build-timeout:
@@ -21,7 +25,10 @@
         - revoke-sudo
         - shell: |
             #!/bin/bash -x
-            /usr/local/jenkins/slave_scripts/tagging_branch.sh $branch_name
+            /usr/local/jenkins/slave_scripts/tagging_branch.sh $branch_name $tag_name
+
+    publishers:
+        - post-ws-clean
 
 - job:
     name: 'create-branch'
@@ -51,3 +58,6 @@
         - shell: |
             #!/bin/bash -x
             /usr/local/jenkins/slave_scripts/create_branch.sh $branch_name $SHA
+
+    publishers:
+        - post-ws-clean
