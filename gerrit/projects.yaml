@@ -133,6 +133,9 @@
 - project: openswitch/ops-switchd-fpa-plugin
   description: OpenSwitch Marvell OVS plugin
 
+- project: openswitch/ops-switchd-transwarp-plugin
+  description: OpenSwitch Centec OVS plugin
+
 - project: openswitch/ops-hw-config
   description: Configuration files repository for all the platforms
 

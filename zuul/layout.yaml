@@ -604,6 +604,13 @@ projects:
         module: ops-switchd-fpa-plugin
         platform: genericx86-64
 
+  - name: openswitch/ops-switchd-transwarp-plugin
+    template:
+      - name: merge-check
+      - name: module-build
+        module: ops-switchd-transwarp-plugin
+        platform: genericx86-64
+
   - name: openswitch/ops-pmd
     template:
       - name: merge-check
